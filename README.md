@@ -1,7 +1,5 @@
 # Navix v2 — Agentic AI Career Coach
 
-> Built on [piyush-eon/ai-career-coach](https://github.com/piyush-eon/ai-career-coach) with a complete agentic AI redesign
-
 ---
 
 ## What Makes This Different
@@ -109,7 +107,7 @@ npm run dev
 | `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | `/sign-up` |
 | `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL` | `/onboarding` |
 | `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL` | `/onboarding` |
-| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) |
+| 'GROQ API Key '| (https://console.groq.com)|
 | `INNGEST_EVENT_KEY` | [inngest.com](https://inngest.com) |
 | `INNGEST_SIGNING_KEY` | Inngest dashboard |
 
@@ -131,7 +129,7 @@ npm run dev
 - **React 19**
 - **Clerk** — Authentication
 - **Prisma** + **Neon PostgreSQL** — Database
-- **Google Gemini 2.0 Flash** — AI
+- **GROQ API ** — AI
 - **Inngest** — Background jobs
 - **shadcn/ui** + **Tailwind CSS** — UI
 - **Recharts** — Charts
