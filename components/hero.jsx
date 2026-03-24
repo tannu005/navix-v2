@@ -41,7 +41,7 @@ export default function HeroSection() {
           }}
         >
           <Sparkles className="h-3.5 w-3.5" />
-          Powered by Gemini 2.0 Flash · Agentic AI
+          Powered by Powered by Groq · Agentic AI · Agentic AI
         </div>
 
         {/* Headline */}

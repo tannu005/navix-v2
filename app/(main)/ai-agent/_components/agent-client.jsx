@@ -23,10 +23,10 @@ const SUGGESTED_GOALS = [
 
 const STATUS_ICONS = {
   thinking: <Brain className="h-4 w-4 text-blue-400 animate-pulse" />,
-  acting:   <Wrench className="h-4 w-4 text-yellow-400 animate-spin" />,
+  acting: <Wrench className="h-4 w-4 text-yellow-400 animate-spin" />,
   reflecting: <Search className="h-4 w-4 text-purple-400 animate-pulse" />,
-  done:     <CheckCircle2 className="h-4 w-4 text-green-400" />,
-  error:    <Zap className="h-4 w-4 text-red-400" />,
+  done: <CheckCircle2 className="h-4 w-4 text-green-400" />,
+  error: <Zap className="h-4 w-4 text-red-400" />,
 };
 
 const STATUS_LABELS = {
@@ -129,7 +129,7 @@ export default function AgentClient() {
             <Brain className="h-3 w-3" /> Multi-step Reasoning
           </Badge>
           <Badge variant="outline" className="text-xs gap-1">
-            <Sparkles className="h-3 w-3" /> Gemini 2.0 Flash
+            <Sparkles className="h-3 w-3" /> Powered by Groq · Agentic AI
           </Badge>
         </div>
       </div>
