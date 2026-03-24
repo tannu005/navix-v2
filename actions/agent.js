@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { runAgent, runAgentStep, createAgentState } from "@/lib/agent";
-import { generateContent } from "@/lib/gemini";
+import { generateContent } from "@/lib/groq";
 
 async function getAuthUser() {
   const { userId } = await auth();

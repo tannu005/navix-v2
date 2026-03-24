@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { generateContent } from "@/lib/gemini";
+import { generateContent } from "@/lib/groq";
 import { revalidatePath } from "next/cache";
 
 export async function saveResume(content) {

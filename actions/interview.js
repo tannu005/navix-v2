@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { generateContent } from "@/lib/gemini";
+import { generateContent } from "@/lib/groq";
 
 export async function generateQuiz() {
   const { userId } = await auth();
@@ -15,8 +15,7 @@ export async function generateQuiz() {
   if (!user) throw new Error("User not found");
 
   const prompt = `
-    Generate 10 technical interview questions for a ${user.industry} professional${
-      user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
+    Generate 10 technical interview questions for a ${user.industry} professional${user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
     }.
     Each question should be multiple choice with 4 options.
     Return ONLY this JSON, no extra text:

@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { generateContent } from "@/lib/gemini";
+import { generateContent } from "@/lib/groq";
 
 export async function generateCoverLetter(data) {
   const { userId } = await auth();
