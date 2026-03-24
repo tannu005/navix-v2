@@ -1,4 +1,4 @@
-import { DM_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
@@ -6,7 +6,7 @@ import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { dark } from "@clerk/themes";
 
-const dmSans = DM_Sans({ subsets: ["latin"], axes: ["opsz"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: {
@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         <head>
           <link rel="icon" href="/logo.png" sizes="any" />
         </head>
-        <body className={dmSans.className}>
+        <body className={inter.className}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
