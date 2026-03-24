@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { model } from "@/lib/gemini";
+import { generateContent } from "@/lib/gemini";
 
 export const generateAIInsights = async (industry) => {
   const prompt = `
@@ -23,9 +23,9 @@ export const generateAIInsights = async (industry) => {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text);
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("Gemini failed, using fallback:", error.message);
     return {

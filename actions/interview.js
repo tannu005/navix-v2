@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { model } from "@/lib/gemini";
+import { generateContent } from "@/lib/gemini";
 
 export async function generateQuiz() {
   const { userId } = await auth();
@@ -33,9 +33,9 @@ export async function generateQuiz() {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text).questions;
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned).questions;
   } catch (error) {
     console.error("Error generating quiz:", error);
     throw new Error("Failed to generate quiz questions");
@@ -69,13 +69,12 @@ export async function saveQuizResult(questions, answers, score) {
       .join("\n\n");
 
     try {
-      const tipResult = await model.generateContent(`
-        The user got the following ${user.industry} technical interview questions wrong:
-        ${wrongQuestionsText}
-        Provide a concise, specific improvement tip under 2 sentences. Be encouraging.
-        Don't mention the mistakes directly — focus on what to learn/practice.
-      `);
-      improvementTip = tipResult.response.text().trim();
+      improvementTip = await generateContent(`
+  The user got the following ${user.industry} technical interview questions wrong:
+  ${wrongQuestionsText}
+  Provide a concise, specific improvement tip under 2 sentences. Be encouraging.
+  Don't mention the mistakes directly — focus on what to learn/practice.
+     `);
     } catch (err) {
       console.error("Error generating improvement tip:", err);
     }

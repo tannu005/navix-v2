@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { model } from "@/lib/gemini";
+import { generateContent } from "@/lib/gemini";
 import { revalidatePath } from "next/cache";
 
 export async function saveResume(content) {
@@ -61,8 +61,8 @@ export async function improveWithAI({ current, type }) {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    const text = await generateContent(prompt);
+    return text.trim();
   } catch (error) {
     console.error("Error improving content:", error);
     throw new Error("Failed to improve content");
@@ -89,9 +89,9 @@ export async function checkATSScore({ resumeContent, jobDescription }) {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text);
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("Error checking ATS score:", error);
     throw new Error("Failed to analyze resume");

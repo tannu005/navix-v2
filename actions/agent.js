@@ -3,7 +3,7 @@
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { runAgent, runAgentStep, createAgentState } from "@/lib/agent";
-import { model } from "@/lib/gemini";
+import { generateContent } from "@/lib/gemini";
 
 async function getAuthUser() {
   const { userId } = await auth();
@@ -103,9 +103,9 @@ export async function generateCareerRoadmap({ targetRole, timelineWeeks = 12 }) 
     }
   `;
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text);
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("Roadmap generation failed:", error.message);
     throw new Error("Failed to generate roadmap. Try again.");
@@ -137,9 +137,9 @@ export async function analyzeSkillGap({ targetRole, jobDescription }) {
     }
   `;
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text);
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("Skill gap analysis failed:", error.message);
     throw new Error("Failed to analyse skill gap. Try again.");
@@ -171,9 +171,9 @@ export async function optimizeLinkedIn({ targetRole }) {
     }
   `;
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text);
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("LinkedIn optimisation failed:", error.message);
     throw new Error("Failed to optimise LinkedIn profile. Try again.");
@@ -205,9 +205,9 @@ export async function getSalaryIntelligence({ targetRole, location = "India" }) 
     }
   `;
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```(?:json)?\n?/g, "").trim();
-    return JSON.parse(text);
+    const text = await generateContent(prompt);
+    const cleaned = text.replace(/```(?:json)?\n?/g, "").trim();
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("Salary intelligence failed:", error.message);
     throw new Error("Failed to fetch salary data. Try again.");

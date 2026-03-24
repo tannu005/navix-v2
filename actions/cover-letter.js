@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { model } from "@/lib/gemini";
+import { generateContent } from "@/lib/gemini";
 
 export async function generateCoverLetter(data) {
   const { userId } = await auth();
@@ -31,8 +31,7 @@ export async function generateCoverLetter(data) {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const content = result.response.text().trim();
+    const content = await generateContent(prompt);
 
     return await db.coverLetter.create({
       data: {
