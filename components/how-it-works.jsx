@@ -54,7 +54,7 @@ function StepItem({ step, index }) {
   return (
     <div
       ref={ref}
-      className="group relative flex gap-8 pb-16 last:pb-0"
+      className="group relative flex gap-8 pb-16 last:pb-0 reveal"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(40px)",
@@ -115,7 +115,7 @@ export default function HowItWorks() {
             transform: headVisible ? "translateY(0)" : "translateY(30px)",
             transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
           }}
-          className="md:sticky md:top-32 md:self-start"
+          className="md:sticky md:top-32 md:self-start reveal"
         >
           <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">Process</p>
           <h2
