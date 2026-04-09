@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+// FIX 1: Import GSAP directly from the installed package
+import gsap from "gsap";
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
@@ -13,21 +15,11 @@ export default function HeroSection() {
   const h1Ref = useRef(null);
   const strokeRef = useRef(null);
   const cursorRef = useRef(null);
-  const gsapRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
-    const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js";
-    script.onload = () => {
-      const gsap = window.gsap;
-      gsapRef.current = gsap;
-      runAnimations(gsap);
-    };
-    document.head.appendChild(script);
-    return () => {
-      if (document.head.contains(script)) document.head.removeChild(script);
-    };
+    // FIX 2: Run animations directly inside useEffect once mounted
+    runAnimations();
   }, []);
 
   function separateLetters(el) {
@@ -46,7 +38,7 @@ export default function HeroSection() {
     el.innerHTML = html;
   }
 
-  function runAnimations(gsap) {
+  function runAnimations() {
     const intro = introRef.current;
     const introRed = introRedRef.current;
     const h1 = h1Ref.current;
@@ -58,39 +50,42 @@ export default function HeroSection() {
 
     const h1Letters = h1.querySelectorAll(".cin-letter");
     const strokeLetters = stroke.querySelectorAll(".cin-letter");
+    
+    // Initial state setup
     gsap.set([h1Letters, strokeLetters], { y: "115%", scaleY: 1.8, opacity: 0 });
 
     const fonts = ["Anton","Jost","Alkatra","Nova Oval","Oswald","PT Serif","Lexend","Poppins","Syne"];
     const introTL = gsap.timeline({ onComplete: () => setIntroGone(true) });
+    
+    // Font swapping logic from your cinematic zip
     fonts.forEach((f) => introTL.to(intro, { duration: 0.09, fontFamily: f, ease: "none" }));
+    
     if (introRed) {
       introTL.to(introRed, { scaleY: 2, duration: 1, ease: "expo.inOut" }, "-=0.3");
     }
     introTL.to(intro, { scaleY: 0, duration: 1, ease: "expo.inOut", transformOrigin: "top" }, "-=1");
 
+    // Title entrance
     gsap.to(h1Letters, { y: "0%", scaleY: 1, opacity: 1, duration: 1.4, ease: "expo.out", stagger: 0.028, delay: 0.8 });
     gsap.to(strokeLetters, { y: "0%", scaleY: 1, opacity: 1, duration: 1.4, ease: "expo.out", stagger: 0.028, delay: 0.88 });
   }
 
+  // Cursor handling
   function handleMouseMove(e) {
-    const gsap = gsapRef.current;
-    if (!gsap || !cursorRef.current) return;
+    if (!cursorRef.current) return;
     gsap.to(cursorRef.current, { duration: 0.45, x: e.clientX, y: e.clientY, ease: "power2.out" });
   }
   function handleMouseEnter() {
-    const gsap = gsapRef.current;
-    if (!gsap || !cursorRef.current) return;
+    if (!cursorRef.current) return;
     gsap.to(cursorRef.current, { scale: 1, duration: 0.45, ease: "expo.inOut" });
   }
   function handleMouseLeave() {
-    const gsap = gsapRef.current;
-    if (!gsap || !cursorRef.current) return;
+    if (!cursorRef.current) return;
     gsap.to(cursorRef.current, { scale: 0, duration: 0.45, ease: "expo.inOut" });
   }
 
   return (
     <>
-      {/* INTRO WIPE */}
       {!introGone && (
         <div
           ref={introRef}
@@ -122,7 +117,6 @@ export default function HeroSection() {
         </div>
       )}
 
-      {/* CINEMATIC HERO */}
       <section
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
@@ -133,19 +127,7 @@ export default function HeroSection() {
           overflow:"hidden", background:"#080a0f",
         }}
       >
-        {/* Full-bleed background video */}
-        <video loop autoPlay muted playsInline
-          style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", zIndex:0, opacity:0.22 }}>
-          <source src="https://www.paulrogerdev.fr/codepen/pexels-artem-podrez-4832087-1280x720-30fps.mp4" type="video/mp4" />
-        </video>
-
-        {/* Gradient overlay */}
-        <div style={{
-          position:"absolute", inset:0, zIndex:1,
-          background:"linear-gradient(to bottom, rgba(8,10,15,0.72) 0%, rgba(8,10,15,0.35) 40%, rgba(8,10,15,0.88) 100%)",
-        }} />
-
-        {/* Polygon-masked video shape */}
+        {/* Cinematic Masked Video */}
         <div style={{
           position:"absolute", zIndex:2,
           top:"50%", left:"50%",
@@ -160,28 +142,7 @@ export default function HeroSection() {
           </video>
         </div>
 
-        {/* TEXT CONTENT */}
         <div style={{ position:"relative", zIndex:3, textAlign:"center", padding:"6rem 1.5rem 0", width:"100%", maxWidth:"900px" }}>
-
-          {/* Badge */}
-          <div style={{
-            display:"inline-flex", alignItems:"center", gap:"0.5rem",
-            padding:"0.35rem 0.9rem", borderRadius:"999px",
-            border:"1px solid hsl(199 89% 60% / 0.3)",
-            background:"hsl(199 89% 60% / 0.07)",
-            color:"hsl(199,89%,72%)",
-            fontFamily:"Syne,sans-serif", fontSize:"0.6875rem", fontWeight:600,
-            letterSpacing:"0.12em", textTransform:"uppercase",
-            marginBottom:"2rem",
-            opacity: mounted ? 1 : 0, transition:"opacity 0.5s ease 1.8s",
-          }}>
-            <Sparkles style={{ width:"11px", height:"11px" }} />
-            Powered by Gemini 2.0 Flash · Agentic AI
-          </div>
-
-          {/* Headline with letter animation */}
-          <div style={{ position:"relative", lineHeight:0.9, marginBottom:"0.2rem" }}>
-            {/* Filled */}
             <h1 ref={h1Ref} style={{
               fontFamily:"Syne,sans-serif", fontWeight:800,
               fontSize:"clamp(3.2rem,10.5vw,8.5rem)",
@@ -190,7 +151,6 @@ export default function HeroSection() {
             }}>
               Navix AI
             </h1>
-            {/* Stroke outline */}
             <div ref={strokeRef} aria-hidden="true" style={{
               fontFamily:"Syne,sans-serif", fontWeight:800,
               fontSize:"clamp(3.2rem,10.5vw,8.5rem)",
@@ -201,82 +161,26 @@ export default function HeroSection() {
             }}>
               Navix AI
             </div>
-          </div>
-
-          {/* Sub-headline */}
-          <p style={{
-            fontFamily:"DM Sans,sans-serif", fontWeight:300,
-            fontSize:"clamp(0.9rem,1.7vw,1.15rem)",
-            color:"rgba(255,255,255,0.45)", letterSpacing:"0.02em",
-            maxWidth:"480px", margin:"2rem auto 2.5rem", lineHeight:1.75,
-            opacity: mounted ? 1 : 0, transition:"opacity 0.6s ease 2.1s",
-          }}>
-            Your AI career coach — resume building, interview prep, skill gap analysis and salary intelligence.
-          </p>
-
-          {/* CTAs */}
-          <div style={{
-            display:"flex", justifyContent:"center", gap:"0.75rem", flexWrap:"wrap",
-            opacity: mounted ? 1 : 0, transition:"opacity 0.6s ease 2.2s",
-          }}>
-            <Link href="/dashboard">
-              <Button size="lg" className="btn-glow" style={{
-                background:"hsl(199,89%,48%)", color:"#fff", border:"none",
-                fontFamily:"Syne,sans-serif", fontWeight:600, letterSpacing:"0.06em",
-                fontSize:"0.75rem", height:"48px", padding:"0 2rem", textTransform:"uppercase",
-              }}>
-                Get Started Free <ArrowRight style={{ marginLeft:"0.5rem", width:"15px", height:"15px" }} />
-              </Button>
-            </Link>
-            <Link href="#features">
-              <Button size="lg" variant="outline" style={{
-                borderColor:"rgba(255,255,255,0.14)", color:"rgba(255,255,255,0.55)",
-                background:"rgba(255,255,255,0.03)", backdropFilter:"blur(8px)",
-                fontFamily:"Syne,sans-serif", fontWeight:500, letterSpacing:"0.05em",
-                fontSize:"0.75rem", height:"48px", padding:"0 2rem", textTransform:"uppercase",
-              }}>
-                See Features
-              </Button>
-            </Link>
-          </div>
-
-          {/* Trust line */}
-          <p style={{
-            marginTop:"1.5rem", fontSize:"0.625rem", color:"rgba(255,255,255,0.22)",
-            letterSpacing:"0.16em", textTransform:"uppercase", fontFamily:"Syne,sans-serif",
-            opacity: mounted ? 1 : 0, transition:"opacity 0.6s ease 2.4s",
-          }}>
-            No credit card required · 8 AI tools · Built for job seekers
-          </p>
-        </div>
-
-        {/* Scroll hint */}
-        <div style={{
-          position:"absolute", bottom:"2.5rem", left:"50%", transform:"translateX(-50%)",
-          zIndex:4, display:"flex", flexDirection:"column", alignItems:"center", gap:"0.5rem",
-          opacity: mounted ? 0.4 : 0, transition:"opacity 0.6s ease 2.6s",
-        }}>
-          <span style={{ fontSize:"0.55rem", letterSpacing:"0.22em", textTransform:"uppercase", color:"rgba(255,255,255,0.7)", fontFamily:"Syne,sans-serif" }}>
-            Scroll
-          </span>
-          <div style={{
-            width:"1px", height:"42px",
-            background:"linear-gradient(to bottom, rgba(255,255,255,0.5), transparent)",
-            animation:"cin-scroll-pulse 2s ease-in-out infinite",
-          }} />
+          <Link href="/dashboard">
+            <Button size="lg" className="btn-glow" style={{
+              background:"hsl(199,89%,48%)", color:"#fff", border:"none",
+              fontFamily:"Syne,sans-serif", fontWeight:600, letterSpacing:"0.06em",
+              fontSize:"0.75rem", height:"48px", padding:"0 2rem", textTransform:"uppercase",
+            }}>
+              Get Started Free <ArrowRight style={{ marginLeft:"0.5rem", width:"15px", height:"15px" }} />
+            </Button>
+          </Link>
         </div>
       </section>
 
-      {/* CINEMATIC CURSOR */}
+      {/* Cinematic Custom Cursor */}
       <div
         ref={cursorRef}
         style={{
-          position:"fixed", top:0, left:0, zIndex:9998, pointerEvents:"none",
+          position:"fixed", top:0, left:0, zIndex:9999, pointerEvents:"none",
           transform:"translate(-50%,-50%) scale(0)",
           display:"flex", alignItems:"center", justifyContent:"center",
           width:"clamp(70px,7vw,100px)", aspectRatio:"10/4",
-          color:"#fff", fontFamily:"Syne,sans-serif", fontWeight:700,
-          fontSize:"clamp(8px,1vw,11px)", letterSpacing:"0.1em", textTransform:"uppercase",
         }}
       >
         <div style={{
@@ -284,15 +188,8 @@ export default function HeroSection() {
           background:"hsl(199,89%,48%)",
           borderRadius:"50%", transform:"rotate(-12deg)",
         }} />
-        <span style={{ position:"relative", zIndex:1, color:"#fff" }}>Explore</span>
+        <span style={{ position:"relative", zIndex:1, color:"#fff", fontSize:"10px" }}>Explore</span>
       </div>
-
-      <style>{`
-        @keyframes cin-scroll-pulse {
-          0%,100%{opacity:1;transform:scaleY(1);}
-          50%{opacity:0.3;transform:scaleY(0.5);}
-        }
-      `}</style>
     </>
   );
 }
