@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "gsap": "^3.12.5",
     "@clerk/nextjs": "^6.36.8",
     "@clerk/themes": "^2.4.48",
     "@google/generative-ai": "^0.21.0",
