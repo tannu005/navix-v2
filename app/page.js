@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-// Import existing Navix components
+// Import standard components
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 import Testimonials from "@/components/testimonials";
@@ -16,13 +16,14 @@ import CTA from "@/components/cta";
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [introGone, setIntroGone] = useState(false);
+  
   const introRef = useRef(null);
   const h1Ref = useRef(null);
   const strokeRef = useRef(null);
   const cursorRef = useRef(null);
   const trailContainerRef = useRef(null);
 
-  // Professional AI Career themed images
+  // AI-Themed images for trail
   const trailImages = [
     "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=200&h=200&fit=crop",
     "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=200&h=200&fit=crop",
@@ -36,9 +37,9 @@ export default function Home() {
   let imageIndex = 0;
   let idleTimer;
 
+  // STEP 1: HYDRATION FIX
   useEffect(() => {
     setMounted(true);
-    runCinematicAnimations();
     const animId = requestAnimationFrame(cleanUpTrail);
     return () => {
       cancelAnimationFrame(animId);
@@ -46,7 +47,13 @@ export default function Home() {
     };
   }, []);
 
-  // Corrects the text break issue (e.g., "C areer")
+  // STEP 2: ANIMATION INITIALIZATION
+  useEffect(() => {
+    if (mounted) {
+      runCinematicAnimations();
+    }
+  }, [mounted]);
+
   function separateLetters(el) {
     if (!el) return;
     const text = el.textContent || "";
@@ -67,6 +74,7 @@ export default function Home() {
     if (!h1Ref.current) return;
     separateLetters(h1Ref.current);
     separateLetters(strokeRef.current);
+    
     const h1Letters = h1Ref.current.querySelectorAll(".cin-letter");
     const strokeLetters = strokeRef.current?.querySelectorAll(".cin-letter");
     
@@ -93,13 +101,9 @@ export default function Home() {
     img.style.opacity = "0";
     
     trailContainerRef.current.appendChild(img);
-    
     gsap.to(img, { opacity: 0.7, scale: 1, duration: 0.8, ease: "power2.out" });
 
-    trail.push({
-      element: img,
-      removeTime: Date.now() + 800
-    });
+    trail.push({ element: img, removeTime: Date.now() + 800 });
   };
 
   const cleanUpTrail = () => {
@@ -118,13 +122,10 @@ export default function Home() {
   };
 
   const handleMouseMove = (e) => {
-    // Obsidian-style follow-string cursor
-    gsap.to(cursorRef.current, { 
-      x: e.clientX, 
-      y: e.clientY, 
-      duration: 0.6, 
-      ease: "power3.out" 
-    });
+    if (!mounted) return;
+    
+    // OBSIDIAN CURSOR FOLLOW
+    gsap.to(cursorRef.current, { x: e.clientX, y: e.clientY, duration: 0.6, ease: "power3.out" });
 
     const dist = Math.hypot(e.clientX - lastMouseX, e.clientY - lastMouseY);
     if (dist > 50) {
@@ -133,7 +134,6 @@ export default function Home() {
       lastMouseY = e.clientY;
     }
 
-    // Slow fade-out logic for idle cursor
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => {
       trail.forEach(item => {
@@ -142,17 +142,18 @@ export default function Home() {
     }, 150); 
   };
 
+  // Prevent early render to stop hydration errors
+  if (!mounted) return <div className="min-h-screen bg-[#05070a]" />;
+
   return (
     <main 
       onMouseMove={handleMouseMove} 
-      className="relative min-h-screen bg-[#05070a] overflow-x-hidden selection:bg-primary/30"
+      className="relative min-h-screen bg-[#05070a] overflow-x-hidden"
     >
-      {/* Follow-string cursor */}
       <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2">
         <div className="w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
       </div>
 
-      {/* AI career trail container */}
       <div ref={trailContainerRef} className="fixed inset-0 pointer-events-none z-[12]" />
 
       {!introGone && (
@@ -161,7 +162,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Section */}
       <section className="relative w-full h-screen flex flex-col items-center justify-center text-center px-4">
         <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
@@ -194,7 +194,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Remaining Navix Content */}
       <div className="relative z-20 bg-[#05070a]">
         <Features />
         <HowItWorks />
