@@ -36,6 +36,11 @@ export default async function Header() {
             <span className="text-foreground">Navi</span>
             <span style={{ color: "hsl(199, 89%, 60%)" }}>x</span>
           </div>
+
+          {/* Badge with reveal */}
+          <span className="text-xs uppercase tracking-widest text-white/40 border border-white/10 px-2 py-0.5 rounded reveal">
+            Beta
+          </span>
         </Link>
 
         <div className="flex items-center space-x-2 md:space-x-3">
