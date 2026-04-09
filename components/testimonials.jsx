@@ -54,6 +54,7 @@ function TestimonialCard({ t, index }) {
   return (
     <div
       ref={ref}
+      data-card
       className="group flex flex-col justify-between p-8 border border-white/[0.06] hover:border-white/[0.10] transition-colors duration-500"
       style={{
         opacity: visible ? 1 : 0,
@@ -105,10 +106,13 @@ export default function Testimonials() {
           style={{
             opacity: headVisible ? 1 : 0,
             transform: headVisible ? "translateY(0)" : "translateY(30px)",
-            transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
+            transition:
+              "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
           }}
         >
-          <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">Voices</p>
+          <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">
+            Voices
+          </p>
           <h2
             className="text-5xl font-medium text-white/80"
             style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.03em" }}
@@ -118,7 +122,10 @@ export default function Testimonials() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: "rgba(255,255,255,0.04)" }}>
+        <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-px"
+          style={{ background: "rgba(255,255,255,0.04)" }}
+        >
           {TESTIMONIALS.map((t, i) => (
             <TestimonialCard key={i} t={t} index={i} />
           ))}
