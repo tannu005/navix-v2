@@ -1,16 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Hero from "@/components/hero";
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import gsap from "gsap";
+
+// Import existing Navix components
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 import Testimonials from "@/components/testimonials";
 import FAQs from "@/components/faqs";
 import CTA from "@/components/cta";
-import gsap from "gsap";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [introGone, setIntroGone] = useState(false);
+  const introRef = useRef(null);
+  const h1Ref = useRef(null);
+  const strokeRef = useRef(null);
   const cursorRef = useRef(null);
   const trailContainerRef = useRef(null);
 
@@ -30,6 +38,7 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
+    runCinematicAnimations();
     const animId = requestAnimationFrame(cleanUpTrail);
     return () => {
       cancelAnimationFrame(animId);
@@ -37,7 +46,39 @@ export default function Home() {
     };
   }, []);
 
+  // Corrects the text break issue (e.g., "C areer")
+  function separateLetters(el) {
+    if (!el) return;
+    const text = el.textContent || "";
+    const words = text.split(/\s+/);
+    let html = "";
+    words.forEach((word) => {
+      html += `<span style="display:inline-flex; overflow:hidden; vertical-align:top; white-space:nowrap;">`;
+      word.split("").forEach((ch) => {
+        html += `<span class="cin-letter" style="display:inline-block">${ch}</span>`;
+      });
+      html += `</span>`;
+      html += `<span style="display:inline-block; width:0.25em"> </span>`;
+    });
+    el.innerHTML = html;
+  }
+
+  function runCinematicAnimations() {
+    if (!h1Ref.current) return;
+    separateLetters(h1Ref.current);
+    separateLetters(strokeRef.current);
+    const h1Letters = h1Ref.current.querySelectorAll(".cin-letter");
+    const strokeLetters = strokeRef.current?.querySelectorAll(".cin-letter");
+    
+    gsap.set([h1Letters, strokeLetters], { y: "115%", scaleY: 1.8, opacity: 0 });
+    const introTL = gsap.timeline({ onComplete: () => setIntroGone(true) });
+    
+    introTL.to(introRef.current, { scaleY: 0, duration: 1.2, ease: "expo.inOut", transformOrigin: "top" });
+    gsap.to([h1Letters, strokeLetters], { y: "0%", scaleY: 1, opacity: 1, duration: 1.5, ease: "expo.out", stagger: 0.02, delay: 0.6 });
+  }
+
   const createTrailImage = (x, y) => {
+    if (!trailContainerRef.current) return;
     const imageSrc = trailImages[imageIndex];
     imageIndex = (imageIndex + 1) % trailImages.length;
     
@@ -51,9 +92,8 @@ export default function Home() {
     img.style.borderRadius = "12px";
     img.style.opacity = "0";
     
-    trailContainerRef.current?.appendChild(img);
+    trailContainerRef.current.appendChild(img);
     
-    // Slow fade-in and scale entrance
     gsap.to(img, { opacity: 0.7, scale: 1, duration: 0.8, ease: "power2.out" });
 
     trail.push({
@@ -66,13 +106,12 @@ export default function Home() {
     const now = Date.now();
     if (trail.length > 0 && now > trail[0].removeTime) {
       const item = trail.shift();
-      // Slow fade-out
       gsap.to(item.element, {
         opacity: 0,
         scale: 0.5,
         duration: 1.5,
         ease: "power2.inOut",
-        onComplete: () => item.element.remove()
+        onComplete: () => item.element?.remove()
       });
     }
     requestAnimationFrame(cleanUpTrail);
@@ -94,7 +133,7 @@ export default function Home() {
       lastMouseY = e.clientY;
     }
 
-    // Trigger slow fade-out when cursor is stopped or idle
+    // Slow fade-out logic for idle cursor
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => {
       trail.forEach(item => {
@@ -106,9 +145,9 @@ export default function Home() {
   return (
     <main 
       onMouseMove={handleMouseMove} 
-      className="relative min-h-screen bg-[#05070a] overflow-x-hidden"
+      className="relative min-h-screen bg-[#05070a] overflow-x-hidden selection:bg-primary/30"
     >
-      {/* Follow-string cursor component */}
+      {/* Follow-string cursor */}
       <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2">
         <div className="w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
       </div>
@@ -116,12 +155,53 @@ export default function Home() {
       {/* AI career trail container */}
       <div ref={trailContainerRef} className="fixed inset-0 pointer-events-none z-[12]" />
 
-      <Hero />
-      <Features />
-      <HowItWorks />
-      <Testimonials />
-      <FAQs />
-      <CTA />
+      {!introGone && (
+        <div ref={introRef} className="intro-overlay bg-black text-primary font-bebas text-6xl fixed inset-0 z-[2000] flex items-center justify-center">
+          NAVIX AI
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <section className="relative w-full h-screen flex flex-col items-center justify-center text-center px-4">
+        <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
+          <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
+        </video>
+
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-syne uppercase tracking-widest fade-up">
+            <Sparkles className="w-3.5 h-3.5" />
+            AI Career Coaching
+          </div>
+
+          <div className="relative mb-6">
+            <h1 ref={h1Ref} className="text-[10vw] font-bebas text-white uppercase leading-none tracking-tighter">
+              Elevate Your Career
+            </h1>
+            <div ref={strokeRef} className="absolute inset-0 text-[10vw] font-bebas uppercase leading-none text-transparent pointer-events-none opacity-20" style={{ WebkitTextStroke: "1px #fff" }}>
+              Elevate Your Career
+            </div>
+          </div>
+
+          <p className="max-w-lg mx-auto text-zinc-500 font-dm text-base mb-10 fade-up">
+            Optimized resume building and interview prep workspace.
+          </p>
+
+          <Link href="/dashboard" className="fade-up">
+            <Button size="lg" className="bg-primary hover:bg-primary/80 text-black font-bold px-12 h-14 rounded-full transition-all duration-500">
+              Launch Navix <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Remaining Navix Content */}
+      <div className="relative z-20 bg-[#05070a]">
+        <Features />
+        <HowItWorks />
+        <Testimonials />
+        <FAQs />
+        <CTA />
+      </div>
     </main>
   );
 }
