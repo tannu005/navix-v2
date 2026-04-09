@@ -22,6 +22,8 @@ export const metadata = {
     type: "website",
   },
 };
+
+// Cursor script constant
 const cursorScript = `
 (function() {
   const core  = document.getElementById('cursor-core');
@@ -99,6 +101,20 @@ export default function RootLayout({ children }) {
           <link rel="icon" href="/logo.png" sizes="any" />
         </head>
         <body className={inter.className}>
+          {/* Custom cursor elements */}
+          <canvas
+            id="cursor-trail"
+            style={{
+              position: "fixed",
+              inset: 0,
+              pointerEvents: "none",
+              zIndex: 99997,
+            }}
+          />
+          <div id="cursor-core" />
+          <div id="cursor-ring" />
+
+          {/* App content */}
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -108,18 +124,30 @@ export default function RootLayout({ children }) {
             <Header />
             <main className="min-h-screen">{children}</main>
             <Toaster richColors />
-            <footer style={{ borderTop: "1px solid hsl(222, 15%, 12%)", background: "hsl(222, 20%, 5%)" }} className="py-10">
+            <footer
+              style={{
+                borderTop: "1px solid hsl(222, 15%, 12%)",
+                background: "hsl(222, 20%, 5%)",
+              }}
+              className="py-10"
+            >
               <div className="container mx-auto px-4 text-center">
                 <p className="text-sm text-muted-foreground">
                   Built by{" "}
-                  <span className="font-semibold" style={{ color: "hsl(199, 89%, 60%)" }}>
+                  <span
+                    className="font-semibold"
+                    style={{ color: "hsl(199, 89%, 60%)" }}
+                  >
                     Tannu Yadav
-                  </span>
-                  {" "}· VIT-AP University · 2026
+                  </span>{" "}
+                  · VIT-AP University · 2026
                 </p>
               </div>
             </footer>
           </ThemeProvider>
+
+          {/* Inject cursor script */}
+          <script dangerouslySetInnerHTML={{ __html: cursorScript }} />
         </body>
       </html>
     </ClerkProvider>
