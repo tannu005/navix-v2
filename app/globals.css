@@ -11,23 +11,7 @@
   :root {
     --background: 222 20% 6%;
     --foreground: 210 20% 95%;
-    --card: 222 18% 8%;
-    --card-foreground: 210 20% 95%;
-    --popover: 222 18% 8%;
-    --popover-foreground: 210 20% 95%;
     --primary: 199 89% 60%;
-    --primary-foreground: 222 20% 6%;
-    --secondary: 222 15% 12%;
-    --secondary-foreground: 210 20% 85%;
-    --muted: 222 15% 11%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 222 15% 13%;
-    --accent-foreground: 210 20% 90%;
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 222 15% 14%;
-    --input: 222 15% 13%;
-    --ring: 199 89% 60%;
     --radius: 0.6rem;
   }
 }
@@ -36,18 +20,14 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden; /* Prevent horizontal scroll for cinematic intro */
+    overflow-x: hidden; /* Critical for cinematic transitions */
     cursor: none; /* Required for custom cinematic cursor */
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', sans-serif;
   }
 }
 
 @layer utilities {
-  /* Cinematic Intro Utilities */
   .intro-overlay {
-    @apply fixed inset-0 z-[1000] flex items-center justify-center bg-[#080a0f] text-white;
+    @apply fixed inset-0 z-[1000] flex items-center justify-center bg-[#080a0f] text-white text-5xl font-bold;
     transform-origin: top;
   }
 
@@ -57,14 +37,13 @@
     transform-origin: bottom;
   }
 
-  /* Status Badges */
-  .status-applied      { @apply bg-blue-500/15 text-blue-400 border-blue-500/25; }
-  .status-interviewing { @apply bg-amber-500/15 text-amber-400 border-amber-500/25; }
-  .status-offered      { @apply bg-emerald-500/15 text-emerald-400 border-emerald-500/25; }
-  .status-rejected     { @apply bg-red-500/15 text-red-400 border-red-500/25; }
+  .hero-letter {
+    @apply inline-block;
+    font-family: "Bebas Neue", sans-serif;
+  }
 }
 
-/* Background Noise Overlay */
+/* Background Texture */
 body::before {
   content: "";
   position: fixed;
