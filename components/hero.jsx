@@ -5,7 +5,9 @@ import Link from "next/link";
 
 export default function Hero() {
   const canvasRef = useRef(null);
+  const imageRef = useRef(null);
 
+  // Particle background effect
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -47,6 +49,29 @@ export default function Hero() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  // ✨ Card tilt effect
+  useEffect(() => {
+    const card = imageRef.current;
+    if (!card) return;
+    const handleMove = (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rotX = -((y - rect.height / 2) / rect.height) * 6;
+      const rotY = ((x - rect.width / 2) / rect.width) * 6;
+      card.style.transform = `perspective(1200px) rotateX(${rotX + 12}deg) rotateY(${rotY}deg) scale(0.97)`;
+    };
+    const handleLeave = () => {
+      card.style.transform = "rotateX(12deg) scale(0.97)";
+    };
+    card.addEventListener("mousemove", handleMove);
+    card.addEventListener("mouseleave", handleLeave);
+    return () => {
+      card.removeEventListener("mousemove", handleMove);
+      card.removeEventListener("mouseleave", handleLeave);
     };
   }, []);
 
@@ -114,6 +139,16 @@ export default function Hero() {
             Explore ↓
           </Link>
         </div>
+      </div>
+
+      {/* Dashboard mockup with tilt */}
+      <div
+        ref={imageRef}
+        data-card
+        className="hero-image relative z-10 mt-16"
+        style={{ transform: "rotateX(12deg) scale(0.97)", transition: "transform 0.3s ease-out" }}
+      >
+        <img src="/dashboard-mockup.png" alt="Dashboard Mockup" className="rounded-lg shadow-lg" />
       </div>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-20">
