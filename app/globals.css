@@ -1,12 +1,14 @@
-/* 1. CINEMATIC FONT IMPORTS (For GSAP Font-Swap Intro) */
+/* 1. ALL @IMPORT STATEMENTS MUST BE AT THE TOP */
 @import url('https://fonts.googleapis.com/css2?family=Alkatra&family=Anton&family=Bebas+Neue&family=Jost:ital,wght@1,600&family=Lexend:wght@700&family=Nova+Oval&family=Oswald:wght@500&family=PT+Serif:wght@700&family=Titillium+Web&display=swap');
-/* 2. EXISTING NAVIX FONT IMPORTS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
+/* 2. TAILWIND DIRECTIVES */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 3. LAYER BASE - CSS VARIABLES AND THEMES */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -54,31 +56,31 @@
     --input: 222 15% 13%;
     --ring: 199 89% 60%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  
   html {
     scroll-behavior: smooth;
   }
+  
   body {
     @apply bg-background text-foreground;
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
-    overflow-x: hidden; /* CRITICAL for GSAP animations */
+    overflow-x: hidden; /* Prevent horizontal scroll during GSAP intro */
+    cursor: none; /* Required for custom cursor components */
   }
+  
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Syne', sans-serif;
   }
 }
 
-/* ── CINEMATIC FEATURES ── */
-
-/* 1. Intro Animation */
+/* 4. CINEMATIC HERO UTILITIES */
 .intro-overlay {
   position: fixed;
   z-index: 1000;
@@ -102,22 +104,12 @@
   transform-origin: bottom;
 }
 
-/* 2. Video Masking logic */
 .hero-letter {
   display: inline-block;
   font-family: "Bebas Neue", sans-serif;
 }
 
-/* 3. Custom Cinematic Cursor */
-.cinematic-cursor-base {
-  position: fixed;
-  z-index: 99999;
-  top: 0; left: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%) scale(0);
-}
-
-/* ── REMAINING NAVIX UTILITIES ── */
+/* 5. EXISTING NAVIX UTILITIES */
 @layer utilities {
   .gradient {
     background: linear-gradient(135deg, hsl(222, 20%, 8%) 0%, hsl(210, 30%, 10%) 40%, hsl(199, 40%, 10%) 100%);
@@ -136,19 +128,24 @@
     padding-bottom: 0.5rem;
   }
 
+  /* Status Badges */
   .status-applied      { @apply bg-blue-500/15 text-blue-400 border-blue-500/25; }
   .status-interviewing { @apply bg-amber-500/15 text-amber-400 border-amber-500/25; }
   .status-offered      { @apply bg-emerald-500/15 text-emerald-400 border-emerald-500/25; }
   .status-rejected     { @apply bg-red-500/15 text-red-400 border-red-500/25; }
   .status-withdrawn    { @apply bg-zinc-500/15 text-zinc-400 border-zinc-500/25; }
 
+  /* Glow and Interaction Effects */
   .btn-glow {
     box-shadow: 0 0 20px hsl(199 89% 60% / 0.3), 0 0 40px hsl(199 89% 60% / 0.1);
     transition: box-shadow 0.3s ease;
   }
+  .btn-glow:hover {
+    box-shadow: 0 0 28px hsl(199 89% 60% / 0.5), 0 0 60px hsl(199 89% 60% / 0.2);
+  }
 }
 
-/* Background & Grid */
+/* Background grid and texture */
 .grid-background {
   position: fixed;
   top: 0; left: 0;
@@ -161,28 +158,6 @@
   z-index: -1;
 }
 
-/* Animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.fade-up { animation: fadeUp 0.6s ease forwards; }
-
-.stat-value {
-  background: linear-gradient(90deg, hsl(199,89%,70%), #fff, hsl(199,89%,70%));
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: shimmer 3s linear infinite;
-  font-family: 'Syne', sans-serif;
-}
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
-}
-
-/* Noise overlay */
 .noise-overlay {
   position: fixed;
   inset: 0;
