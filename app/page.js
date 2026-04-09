@@ -20,39 +20,33 @@ export default function Home() {
   const introRef = useRef(null);
   const h1Ref = useRef(null);
   const strokeRef = useRef(null);
-  const cursorRef = useRef(null);
-  const trailContainerRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  const trailImages = [
-    "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=200&h=200&fit=crop",
-    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=200&h=200&fit=crop",
-    "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&h=200&fit=crop",
-    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=200&h=200&fit=crop"
-  ];
+  // String Physics Variables
+  const mouse = useRef({ x: 0, y: 0 });
+  const points = useRef([]);
+  const numPoints = 20; // Length of the string
 
-  let trail = [];
-  let lastMouseX = 0;
-  let lastMouseY = 0;
-  let imageIndex = 0;
-  let idleTimer;
-
-  // 1. Prevents Hydration Mismatch by waiting for mount
   useEffect(() => {
     setMounted(true);
-    const animId = requestAnimationFrame(cleanUpTrail);
-    return () => {
-      cancelAnimationFrame(animId);
-      clearTimeout(idleTimer);
-    };
+    // Initialize string points
+    for (let i = 0; i < numPoints; i++) {
+      points.current.push({ x: 0, y: 0 });
+    }
   }, []);
 
-  // 2. Runs cinematic animations once mounted
   useEffect(() => {
     if (mounted) {
       runCinematicAnimations();
+      const render = () => {
+        drawString();
+        requestAnimationFrame(render);
+      };
+      render();
     }
   }, [mounted]);
 
+  // Cinematic Intro Text Logic
   function separateLetters(el) {
     if (!el) return;
     const text = el.textContent || "";
@@ -84,83 +78,70 @@ export default function Home() {
     gsap.to([h1Letters, strokeLetters], { y: "0%", scaleY: 1, opacity: 1, duration: 1.5, ease: "expo.out", stagger: 0.02, delay: 0.6 });
   }
 
-  const createTrailImage = (x, y) => {
-    if (!trailContainerRef.current) return;
-    const imageSrc = trailImages[imageIndex];
-    imageIndex = (imageIndex + 1) % trailImages.length;
+  // Physics Logic for the "String"
+  const drawString = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
     
-    const img = document.createElement("img");
-    img.className = "trail-img";
-    img.src = imageSrc;
-    img.style.width = "180px";
-    img.style.height = "180px";
-    img.style.left = `${x}px`;
-    img.style.top = `${y}px`;
-    img.style.borderRadius = "12px";
-    img.style.opacity = "0";
-    
-    trailContainerRef.current.appendChild(img);
-    gsap.to(img, { opacity: 0.7, scale: 1, duration: 0.8, ease: "power2.out" });
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    trail.push({ element: img, removeTime: Date.now() + 800 });
-  };
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const cleanUpTrail = () => {
-    const now = Date.now();
-    if (trail.length > 0 && now > trail[0].removeTime) {
-      const item = trail.shift();
-      gsap.to(item.element, {
-        opacity: 0,
-        scale: 0.5,
-        duration: 1.5,
-        ease: "power2.inOut",
-        onComplete: () => item.element?.remove()
-      });
+    let px = mouse.current.x;
+    let py = mouse.current.y;
+
+    points.current.forEach((p, index) => {
+      p.x += (px - p.x) * 0.35; // LERP for string stiffness
+      p.y += (py - p.y) * 0.35;
+      px = p.x;
+      py = p.y;
+    });
+
+    // Draw the String
+    ctx.strokeStyle = "rgba(199, 89, 60, 0.6)"; // Your primary theme color
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(points.current[0].x, points.current[0].y);
+
+    for (let i = 1; i < points.current.length; i++) {
+      ctx.lineTo(points.current[i].x, points.current[i].y);
     }
-    requestAnimationFrame(cleanUpTrail);
+    ctx.stroke();
+
+    // Draw the cursor head
+    ctx.fillStyle = "#c7593c";
+    ctx.beginPath();
+    ctx.arc(mouse.current.x, mouse.current.y, 4, 0, Math.PI * 2);
+    ctx.fill();
   };
 
   const handleMouseMove = (e) => {
-    if (!mounted) return;
-    
-    // Obsidian Cursor String Logic
-    gsap.to(cursorRef.current, { x: e.clientX, y: e.clientY, duration: 0.6, ease: "power3.out" });
-
-    const dist = Math.hypot(e.clientX - lastMouseX, e.clientY - lastMouseY);
-    if (dist > 50) {
-      createTrailImage(e.clientX, e.clientY);
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-    }
-
-    // Stop and fade out trail
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => {
-      trail.forEach(item => {
-        gsap.to(item.element, { opacity: 0, duration: 2.5, ease: "power1.out" });
-      });
-    }, 150); 
+    mouse.current = { x: e.clientX, y: e.clientY };
   };
 
   if (!mounted) return <div className="min-h-screen bg-[#05070a]" />;
 
   return (
     <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#05070a] overflow-x-hidden">
-      {/* Obsidian String Cursor */}
-      <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2">
-        <div className="w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
-      </div>
+      
+      {/* 1. THE STRING CANVAS (Replaces Image Trail) */}
+      <canvas 
+        ref={canvasRef} 
+        className="fixed inset-0 pointer-events-none z-[1001]"
+      />
 
-      {/* Career Trail Container */}
-      <div ref={trailContainerRef} className="fixed inset-0 pointer-events-none z-[12]" />
-
+      {/* 2. CINEMATIC INTRO */}
       {!introGone && (
-        <div ref={introRef} className="intro-overlay bg-black text-primary font-bebas text-6xl fixed inset-0 z-[2000] flex items-center justify-center">
+        <div ref={introRef} className="intro-overlay bg-black text-[#c7593c] font-bebas text-6xl fixed inset-0 z-[2000] flex items-center justify-center">
           NAVIX AI
         </div>
       )}
 
-      {/* Hero Section */}
+      {/* 3. HERO SECTION */}
       <section className="relative w-full h-screen flex flex-col items-center justify-center text-center px-4">
         <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
@@ -182,7 +163,7 @@ export default function Home() {
           </div>
 
           <p className="max-w-lg mx-auto text-zinc-500 font-dm text-base mb-10 fade-up">
-            Your workspace for optimized resumes and AI-driven coaching.
+            Optimized workspace for resume building and Groq AI career intelligence.
           </p>
 
           <Link href="/dashboard" className="fade-up">
@@ -193,7 +174,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Main Page Sections */}
+      {/* 4. MAIN CONTENT */}
       <div className="relative z-20 bg-[#05070a]">
         <Features />
         <HowItWorks />
