@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-// Import standard components
+// Import your existing Navix components
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 import Testimonials from "@/components/testimonials";
@@ -23,7 +23,6 @@ export default function Home() {
   const cursorRef = useRef(null);
   const trailContainerRef = useRef(null);
 
-  // AI-Themed images for trail
   const trailImages = [
     "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=200&h=200&fit=crop",
     "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=200&h=200&fit=crop",
@@ -37,7 +36,7 @@ export default function Home() {
   let imageIndex = 0;
   let idleTimer;
 
-  // STEP 1: HYDRATION FIX
+  // 1. Prevents Hydration Mismatch by waiting for mount
   useEffect(() => {
     setMounted(true);
     const animId = requestAnimationFrame(cleanUpTrail);
@@ -47,7 +46,7 @@ export default function Home() {
     };
   }, []);
 
-  // STEP 2: ANIMATION INITIALIZATION
+  // 2. Runs cinematic animations once mounted
   useEffect(() => {
     if (mounted) {
       runCinematicAnimations();
@@ -124,7 +123,7 @@ export default function Home() {
   const handleMouseMove = (e) => {
     if (!mounted) return;
     
-    // OBSIDIAN CURSOR FOLLOW
+    // Obsidian Cursor String Logic
     gsap.to(cursorRef.current, { x: e.clientX, y: e.clientY, duration: 0.6, ease: "power3.out" });
 
     const dist = Math.hypot(e.clientX - lastMouseX, e.clientY - lastMouseY);
@@ -134,6 +133,7 @@ export default function Home() {
       lastMouseY = e.clientY;
     }
 
+    // Stop and fade out trail
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => {
       trail.forEach(item => {
@@ -142,18 +142,16 @@ export default function Home() {
     }, 150); 
   };
 
-  // Prevent early render to stop hydration errors
   if (!mounted) return <div className="min-h-screen bg-[#05070a]" />;
 
   return (
-    <main 
-      onMouseMove={handleMouseMove} 
-      className="relative min-h-screen bg-[#05070a] overflow-x-hidden"
-    >
+    <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#05070a] overflow-x-hidden">
+      {/* Obsidian String Cursor */}
       <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2">
         <div className="w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
       </div>
 
+      {/* Career Trail Container */}
       <div ref={trailContainerRef} className="fixed inset-0 pointer-events-none z-[12]" />
 
       {!introGone && (
@@ -162,6 +160,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* Hero Section */}
       <section className="relative w-full h-screen flex flex-col items-center justify-center text-center px-4">
         <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
@@ -183,7 +182,7 @@ export default function Home() {
           </div>
 
           <p className="max-w-lg mx-auto text-zinc-500 font-dm text-base mb-10 fade-up">
-            Optimized resume building and interview prep workspace.
+            Your workspace for optimized resumes and AI-driven coaching.
           </p>
 
           <Link href="/dashboard" className="fade-up">
@@ -194,6 +193,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Main Page Sections */}
       <div className="relative z-20 bg-[#05070a]">
         <Features />
         <HowItWorks />
