@@ -57,7 +57,12 @@ function useInView(ref) {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
       { threshold: 0.15 }
     );
     if (ref.current) obs.observe(ref.current);
@@ -73,7 +78,8 @@ function FeatureRow({ f, index }) {
   return (
     <div
       ref={ref}
-      className="group grid grid-cols-[80px_1fr_auto] items-start gap-8 py-10 border-b border-white/[0.06] cursor-default"
+      data-card
+      className="group grid grid-cols-[80px_1fr_auto] items-start gap-8 py-10 border-b border-white/[0.06] cursor-default reveal"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(40px)",
@@ -92,9 +98,7 @@ function FeatureRow({ f, index }) {
           </h3>
           <span className="text-sm text-white/30 hidden sm:block">{f.subtitle}</span>
         </div>
-        <p
-          className="text-white/30 text-sm leading-relaxed max-w-lg group-hover:text-white/50 transition-colors duration-500"
-        >
+        <p className="text-white/30 text-sm leading-relaxed max-w-lg group-hover:text-white/50 transition-colors duration-500">
           {f.description}
         </p>
       </div>
@@ -117,9 +121,10 @@ export default function Features() {
         style={{
           opacity: headVisible ? 1 : 0,
           transform: headVisible ? "translateY(0)" : "translateY(30px)",
-          transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
+          transition:
+            "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
         }}
-        className="mb-20"
+        className="mb-20 reveal"
       >
         <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">Capabilities</p>
         <h2
