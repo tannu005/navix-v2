@@ -15,12 +15,12 @@ export default function LandingPage() {
   const cursorRef = useRef(null);
   const trailContainerRef = useRef(null);
 
-  // AI Career themed images
+  // AI Career & Coaching Visuals
   const trailImages = [
-    "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=200&h=200&fit=crop",
-    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=200&h=200&fit=crop",
-    "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&h=200&fit=crop",
-    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=200&h=200&fit=crop"
+    "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=200&h=200&fit=crop", // Resume
+    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=200&h=200&fit=crop", // Career
+    "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&h=200&fit=crop", // AI Technology
+    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=200&h=200&fit=crop"  // Professional work
   ];
 
   let trail = [];
@@ -109,11 +109,11 @@ export default function LandingPage() {
   };
 
   const handleMouseMove = (e) => {
-    // OBSIDIAN STYLE CURSOR: Delayed string follow effect
+    // Follow-string cursor logic
     gsap.to(cursorRef.current, { 
       x: e.clientX, 
       y: e.clientY, 
-      duration: 0.6, // Higher duration creates the "string following" lag
+      duration: 0.6, 
       ease: "power3.out" 
     });
 
@@ -124,7 +124,7 @@ export default function LandingPage() {
       lastMouseY = e.clientY;
     }
 
-    // Slow fade-out when moving or stopped
+    // Slow fade-out when cursor is idle
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => {
       trail.forEach(item => {
@@ -144,6 +144,7 @@ export default function LandingPage() {
       )}
 
       <section className="relative w-full h-screen flex flex-col items-center justify-center text-center px-4">
+        {/* Career Tech Background Video */}
         <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
         </video>
@@ -162,7 +163,7 @@ export default function LandingPage() {
           </div>
 
           <p className="max-w-lg mx-auto text-zinc-500 font-dm text-base mb-10 fade-up">
-            The intelligent workspace to optimize your resume and master your next interview.
+             Optimized resume building and interview prep workspace.
           </p>
 
           <Link href="/dashboard" className="fade-up">
@@ -173,7 +174,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* OBSIDIAN STYLE CURSOR: The following string */}
+      {/* Follow-string Cursor */}
       <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2">
         <div className="w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
       </div>
