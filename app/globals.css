@@ -1,4 +1,4 @@
-/* 1. EXTERNAL FONT IMPORTS */
+/* 1. EXTERNAL FONT IMPORTS - Must be at the very top */
 @import url('https://fonts.googleapis.com/css2?family=Alkatra&family=Anton&family=Bebas+Neue&family=Jost:ital,wght@1,600&family=Lexend:wght@700&family=Nova+Oval&family=Oswald:wght@500&family=PT+Serif:wght@700&family=Titillium+Web&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
@@ -11,8 +11,8 @@
   body {
     @apply bg-[#05070a] text-white;
     font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-    cursor: none; /* Hide default cursor for the follow-string effect */
+    overflow-x: hidden; /* Prevent horizontal shaking during animations */
+    cursor: none; /* Hide default cursor for follow-string effect */
   }
 }
 
@@ -22,7 +22,6 @@
     transform-origin: top;
   }
 
-  /* Slow-fade AI Career Trail Images */
   .trail-img {
     @apply absolute object-cover pointer-events-none z-[12];
     transform-origin: center;
@@ -45,10 +44,7 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("https://assets.codepen.io/7558/noise-002.png");
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: screen;
