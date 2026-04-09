@@ -200,3 +200,49 @@ body::before {
   z-index: 9999;
   opacity: 0.4;
 }
+/* ── CUSTOM CURSOR ─────────────────────────────────── */
+body { cursor: none; }
+a, button, [data-card] { cursor: none; }
+
+#cursor-core {
+  position: fixed;
+  top: 0; left: 0;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: hsl(199, 89%, 60%);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease;
+}
+#cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid hsl(199 89% 60% / 0.45);
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s cubic-bezier(0.22,1,0.36,1),
+              height 0.4s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.3s ease;
+}
+#cursor-trail {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99997;
+}
+body.cursor-hover #cursor-core { width: 8px; height: 8px; background: white; }
+body.cursor-hover #cursor-ring { width: 48px; height: 48px; border-color: hsl(199 89% 60% / 0.65); }
+body.cursor-card  #cursor-ring { width: 60px; height: 60px; border-color: hsl(199 89% 60% / 0.3); }
+
+/* ── SCROLL REVEAL ──────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1),
+              transform 0.85s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
