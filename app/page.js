@@ -6,13 +6,6 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-// Import your other Navix sections
-import Features from "@/components/features";
-import HowItWorks from "@/components/how-it-works";
-import Testimonials from "@/components/testimonials";
-import FAQs from "@/components/faqs";
-import CTA from "@/components/cta";
-
 export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
   const [introGone, setIntroGone] = useState(false);
@@ -22,47 +15,42 @@ export default function LandingPage() {
   const cursorRef = useRef(null);
   const trailContainerRef = useRef(null);
 
-  // Magic Trail Configuration
-  const trailConfig = {
-    imageLifespan: 600,
-    mouseThreshold: 40,
-    inDuration: 0.6,
-    outDuration: 0.8,
-  };
-
+  // AI Career themed images
   const trailImages = [
-    "https://assets.codepen.io/7558/cr-blurry-orange-small-001.jpg",
-    "https://assets.codepen.io/7558/cr-blurry-orange-small-002.jpg",
-    "https://assets.codepen.io/7558/cr-blurry-orange-small-003.jpg",
-    "https://assets.codepen.io/7558/cr-blurry-orange-small-004.jpg",
-    "https://assets.codepen.io/7558/cr-blurry-orange-small-005.jpg"
+    "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=200&h=200&fit=crop",
+    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=200&h=200&fit=crop",
+    "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&h=200&fit=crop",
+    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=200&h=200&fit=crop"
   ];
 
   let trail = [];
   let lastMouseX = 0;
   let lastMouseY = 0;
   let imageIndex = 0;
+  let idleTimer;
 
   useEffect(() => {
     setMounted(true);
     runCinematicAnimations();
     const animId = requestAnimationFrame(cleanUpTrail);
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      clearTimeout(idleTimer);
+    };
   }, []);
 
-  // Fixes the "C areer" breaking issue by wrapping words in nowrap spans
   function separateLetters(el) {
     if (!el) return;
     const text = el.textContent || "";
     const words = text.split(/\s+/);
     let html = "";
-    words.forEach((word, wi) => {
+    words.forEach((word) => {
       html += `<span style="display:inline-flex; overflow:hidden; vertical-align:top; white-space:nowrap;">`;
       word.split("").forEach((ch) => {
         html += `<span class="cin-letter" style="display:inline-block">${ch}</span>`;
       });
       html += `</span>`;
-      if (wi < words.length - 1) html += `<span style="display:inline-block; width:0.25em"> </span>`;
+      html += `<span style="display:inline-block; width:0.25em"> </span>`;
     });
     el.innerHTML = html;
   }
@@ -71,27 +59,14 @@ export default function LandingPage() {
     if (!h1Ref.current) return;
     separateLetters(h1Ref.current);
     separateLetters(strokeRef.current);
-
     const h1Letters = h1Ref.current.querySelectorAll(".cin-letter");
     const strokeLetters = strokeRef.current?.querySelectorAll(".cin-letter");
     
     gsap.set([h1Letters, strokeLetters], { y: "115%", scaleY: 1.8, opacity: 0 });
-
     const introTL = gsap.timeline({ onComplete: () => setIntroGone(true) });
-    const fonts = ["Anton","Jost","Alkatra","Nova Oval","Oswald","Lexend","Poppins","Syne"];
     
-    fonts.forEach((f) => introTL.to(introRef.current, { duration: 0.08, fontFamily: f }));
-    introTL.to(introRef.current, { scaleY: 0, duration: 1, ease: "expo.inOut", transformOrigin: "top" });
-
-    gsap.to([h1Letters, strokeLetters], { 
-      y: "0%", 
-      scaleY: 1, 
-      opacity: 1, 
-      duration: 1.2, 
-      ease: "expo.out", 
-      stagger: 0.02, 
-      delay: 0.8 
-    });
+    introTL.to(introRef.current, { scaleY: 0, duration: 1.2, ease: "expo.inOut", transformOrigin: "top" });
+    gsap.to([h1Letters, strokeLetters], { y: "0%", scaleY: 1, opacity: 1, duration: 1.5, ease: "expo.out", stagger: 0.02, delay: 0.6 });
   }
 
   const createTrailImage = (x, y) => {
@@ -101,19 +76,20 @@ export default function LandingPage() {
     const img = document.createElement("img");
     img.className = "trail-img";
     img.src = imageSrc;
-    img.style.width = "200px";
-    img.style.height = "200px";
+    img.style.width = "180px";
+    img.style.height = "180px";
     img.style.left = `${x}px`;
     img.style.top = `${y}px`;
-    img.style.transform = `translate(-50%, -50%) scale(0)`;
+    img.style.borderRadius = "12px";
+    img.style.opacity = "0";
     
     trailContainerRef.current?.appendChild(img);
     
-    gsap.to(img, { scale: 1, duration: trailConfig.inDuration, ease: "expo.out" });
+    gsap.to(img, { opacity: 0.7, scale: 1, duration: 0.8, ease: "power2.out" });
 
     trail.push({
       element: img,
-      removeTime: Date.now() + trailConfig.imageLifespan
+      removeTime: Date.now() + 800
     });
   };
 
@@ -122,9 +98,10 @@ export default function LandingPage() {
     if (trail.length > 0 && now > trail[0].removeTime) {
       const item = trail.shift();
       gsap.to(item.element, {
-        scale: 0,
         opacity: 0,
-        duration: trailConfig.outDuration,
+        scale: 0.5,
+        duration: 1.5,
+        ease: "power2.inOut",
         onComplete: () => item.element.remove()
       });
     }
@@ -132,84 +109,74 @@ export default function LandingPage() {
   };
 
   const handleMouseMove = (e) => {
-    // Update Custom Cursor
-    gsap.to(cursorRef.current, { x: e.clientX, y: e.clientY, duration: 0.4, ease: "power2.out" });
+    // OBSIDIAN STYLE CURSOR: Delayed string follow effect
+    gsap.to(cursorRef.current, { 
+      x: e.clientX, 
+      y: e.clientY, 
+      duration: 0.6, // Higher duration creates the "string following" lag
+      ease: "power3.out" 
+    });
 
-    // Handle Magic Trail
     const dist = Math.hypot(e.clientX - lastMouseX, e.clientY - lastMouseY);
-    if (dist > trailConfig.mouseThreshold) {
+    if (dist > 50) {
       createTrailImage(e.clientX, e.clientY);
       lastMouseX = e.clientX;
       lastMouseY = e.clientY;
     }
+
+    // Slow fade-out when moving or stopped
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      trail.forEach(item => {
+        gsap.to(item.element, { opacity: 0, duration: 2.5, ease: "power1.out" });
+      });
+    }, 150); 
   };
 
   return (
-    <div onMouseMove={handleMouseMove} className="relative min-h-screen bg-black overflow-hidden selection:bg-primary/30">
-      
-      {/* 1. MAGIC TRAIL CONTAINER */}
+    <div onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#05070a] overflow-hidden">
       <div ref={trailContainerRef} className="fixed inset-0 pointer-events-none z-[12]" />
 
-      {/* 2. INTRO OVERLAY */}
       {!introGone && (
         <div ref={introRef} className="intro-overlay">
           NAVIX AI
         </div>
       )}
 
-      {/* 3. HERO SECTION */}
       <section className="relative w-full h-screen flex flex-col items-center justify-center text-center px-4">
-        
-        {/* AI Resume/Job Background Video */}
-        <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-20 z-0">
+        <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
         </video>
 
-        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary-foreground text-[10px] font-syne uppercase tracking-widest fade-up">
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-8 mx-auto w-fit px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-syne uppercase tracking-widest fade-up">
             <Sparkles className="w-3.5 h-3.5" />
-            AI-Powered Career Intelligence
+            AI Career Coaching
           </div>
 
-          <div className="relative mb-6">
-            <h1 ref={h1Ref} className="text-[12vw] font-bebas text-white uppercase leading-none tracking-tighter">
-              Elevate Your Career
-            </h1>
-            <div ref={strokeRef} className="absolute inset-0 text-[12vw] font-bebas uppercase leading-none text-transparent pointer-events-none tracking-tighter" style={{ WebkitTextStroke: "1px rgba(255,255,255,0.1)" }}>
-              Elevate Your Career
-            </div>
+          <h1 ref={h1Ref} className="text-[10vw] font-bebas text-white uppercase leading-none tracking-tighter mb-4">
+            Elevate Your Career
+          </h1>
+          <div ref={strokeRef} className="absolute inset-0 text-[10vw] font-bebas uppercase leading-none text-transparent pointer-events-none opacity-20" style={{ WebkitTextStroke: "1px #fff" }}>
+            Elevate Your Career
           </div>
 
-          <p className="max-w-md text-zinc-400 font-dm text-sm mb-10 fade-up" style={{ transitionDelay: "1.2s" }}>
-            The intelligent path to your next role. Optimize resumes, master interviews, and track opportunities in one workspace.
+          <p className="max-w-lg mx-auto text-zinc-500 font-dm text-base mb-10 fade-up">
+            The intelligent workspace to optimize your resume and master your next interview.
           </p>
 
-          <div className="flex gap-4 fade-up" style={{ transitionDelay: "1.4s" }}>
-            <Link href="/dashboard">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-syne px-10 h-14 uppercase tracking-wider text-xs">
-                Launch Dashboard <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
+          <Link href="/dashboard" className="fade-up">
+            <Button size="lg" className="bg-primary hover:bg-primary/80 text-black font-bold px-12 h-14 rounded-full transition-all duration-500">
+              Launch Navix <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
         </div>
       </section>
 
-      {/* 4. ADDITIONAL CONTENT SECTIONS */}
-      <div className="relative z-20 bg-black">
-        <Features />
-        <HowItWorks />
-        <Testimonials />
-        <FAQs />
-        <CTA />
+      {/* OBSIDIAN STYLE CURSOR: The following string */}
+      <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2">
+        <div className="w-3 h-3 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
       </div>
-
-      {/* 5. CUSTOM CINEMATIC CURSOR */}
-      <div ref={cursorRef} className="fixed top-0 left-0 z-[1001] pointer-events-none -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-        <div className="w-24 h-8 bg-primary rounded-full rotate-[-12deg] flex items-center justify-center text-[10px] text-white font-bold uppercase tracking-widest opacity-0 hover:opacity-100 transition-opacity">
-          Navix
-        </div>
-      </div>
-
     </div>
   );
 }
