@@ -61,7 +61,7 @@ function FAQItem({ faq, index }) {
   return (
     <div
       ref={ref}
-      className="border-b border-white/[0.06] last:border-0"
+      className="border-b border-white/[0.06] last:border-0 reveal"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(20px)",
@@ -82,7 +82,8 @@ function FAQItem({ faq, index }) {
           className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-white/20 group-hover:text-white/40 transition-all duration-300 mt-0.5"
           style={{
             transform: open ? "rotate(45deg)" : "rotate(0deg)",
-            transition: "transform 0.3s cubic-bezier(0.16,1,0.3,1), color 0.3s",
+            transition:
+              "transform 0.3s cubic-bezier(0.16,1,0.3,1), color 0.3s",
           }}
         >
           +
@@ -93,7 +94,8 @@ function FAQItem({ faq, index }) {
         style={{
           maxHeight: open ? "200px" : "0",
           overflow: "hidden",
-          transition: "max-height 0.4s cubic-bezier(0.16,1,0.3,1)",
+          transition:
+            "max-height 0.4s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         <p className="text-white/25 text-sm leading-relaxed pb-7 max-w-xl">
@@ -110,32 +112,62 @@ export default function FAQs() {
 
   return (
     <section className="py-32 px-6 border-t border-white/[0.04]">
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-20">
-        {/* Heading */}
-        <div
-          ref={headRef}
-          style={{
-            opacity: headVisible ? 1 : 0,
-            transform: headVisible ? "translateY(0)" : "translateY(30px)",
-            transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
-          }}
-          className="md:sticky md:top-32 md:self-start"
-        >
-          <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">Questions</p>
-          <h2
-            className="text-5xl font-medium text-white/80"
-            style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.03em" }}
-          >
-            Common<br />
-            <span className="text-white/30">queries.</span>
-          </h2>
+      <div className="max-w-4xl mx-auto">
+        {/* Stats Section */}
+        <h2 className="text-3xl font-bold mb-10 text-center">Our Impact</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+          <div className="text-center">
+            <p className="text-4xl font-bold">10k+</p>
+            <p className="text-muted-foreground">Resumes Built</p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl font-bold">5k+</p>
+            <p className="text-muted-foreground">Interviews Prepped</p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl font-bold">3k+</p>
+            <p className="text-muted-foreground">Cover Letters Generated</p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl font-bold">2k+</p>
+            <p className="text-muted-foreground">Job Offers Secured</p>
+          </div>
         </div>
 
-        {/* FAQ List */}
-        <div>
-          {FAQS.map((faq, i) => (
-            <FAQItem key={i} faq={faq} index={i} />
-          ))}
+        {/* FAQ Section */}
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-20 mt-20">
+          {/* Heading */}
+          <div
+            ref={headRef}
+            style={{
+              opacity: headVisible ? 1 : 0,
+              transform: headVisible ? "translateY(0)" : "translateY(30px)",
+              transition:
+                "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
+            }}
+            className="md:sticky md:top-32 md:self-start reveal"
+          >
+            <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">
+              Questions
+            </p>
+            <h2
+              className="text-5xl font-medium text-white/80"
+              style={{
+                fontFamily: "'Georgia', serif",
+                letterSpacing: "-0.03em",
+              }}
+            >
+              Common<br />
+              <span className="text-white/30">queries.</span>
+            </h2>
+          </div>
+
+          {/* FAQ List */}
+          <div>
+            {FAQS.map((faq, i) => (
+              <FAQItem key={i} faq={faq} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
