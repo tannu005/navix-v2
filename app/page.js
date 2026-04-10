@@ -1,50 +1,56 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-// Import your sub-components
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [introGone, setIntroGone] = useState(false);
-  
+
   const introRef = useRef(null);
   const h1OverRef = useRef(null);
   const canvasRef = useRef(null);
-  const mouse = useRef({ x: 0, y: 0 });
+  const mouse = useRef({ x: -9999, y: -9999 }); // FIX: start off-screen so mask doesn't block on load
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
+  const rafIdRef = useRef(null); // FIX: track RAF id in a ref so it can be cancelled
 
-  // 1. Mount Check
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 2. Main Physics & Animation Loop
   useEffect(() => {
     if (!mounted) return;
 
-    // Intro Wipe
-    const introTl = gsap.to(introRef.current, { 
-      scaleY: 0, 
-      duration: 1.5, 
-      ease: "expo.inOut", 
+    // Intro wipe
+    const introTl = gsap.to(introRef.current, {
+      scaleY: 0,
+      duration: 1.5,
+      ease: "expo.inOut",
       transformOrigin: "top",
-      onComplete: () => setIntroGone(true)
+      onComplete: () => setIntroGone(true),
     });
 
-    const tick = () => {
-      // String Physics
-      const canvas = canvasRef.current;
+    // FIX: Resize canvas properly via ResizeObserver, not inside the RAF loop
+    const canvas = canvasRef.current;
+    const resizeCanvas = () => {
       if (canvas) {
-        const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+      }
+    };
+    resizeCanvas();
+    const resizeObserver = new ResizeObserver(resizeCanvas);
+    resizeObserver.observe(document.documentElement);
+
+    const tick = () => {
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         let px = mouse.current.x;
@@ -67,7 +73,7 @@ export default function Home() {
         ctx.stroke();
       }
 
-      // Headline Reveal Mask
+      // Headline reveal mask
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
@@ -77,49 +83,77 @@ export default function Home() {
         h1OverRef.current.style.maskImage = mask;
       }
 
-      requestAnimationFrame(tick);
+      rafIdRef.current = requestAnimationFrame(tick); // FIX: store id in ref
     };
 
-    const animId = requestAnimationFrame(tick);
+    rafIdRef.current = requestAnimationFrame(tick);
+
     return () => {
-      cancelAnimationFrame(animId);
+      cancelAnimationFrame(rafIdRef.current); // FIX: correctly cancel via ref
       introTl.kill();
+      resizeObserver.disconnect(); // FIX: clean up observer
     };
   }, [mounted]);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     mouse.current = { x: e.clientX, y: e.clientY };
 
-    // Magnetic Buttons
     const btns = document.querySelectorAll(".magnetic-btn");
-    btns.forEach(btn => {
+    btns.forEach((btn) => {
       const rect = btn.getBoundingClientRect();
       const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
       const y = (e.clientY - rect.top - rect.height / 2) * 0.25;
       gsap.to(btn, { x, y, duration: 0.4, ease: "power2.out" });
     });
-  };
+  }, []);
 
-  // HYDRATION GUARD: Prevents window is not defined
+  // FIX: Reset magnetic buttons when mouse leaves the main container
+  const handleMouseLeave = useCallback(() => {
+    const btns = document.querySelectorAll(".magnetic-btn");
+    btns.forEach((btn) => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.4, ease: "power2.out" });
+    });
+    // Push mouse off-screen so the string trail and mask disappear cleanly
+    mouse.current = { x: -9999, y: -9999 };
+  }, []);
+
   if (!mounted) return <div className="min-h-screen bg-[#050505]" />;
 
   return (
-    <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-orange-500/30">
-      
+    <main
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave} // FIX: added
+      className="relative min-h-screen bg-[#050505] selection:bg-orange-500/30"
+    >
       {/* Follow String */}
-      <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 pointer-events-none z-[1001]"
+      />
 
       {/* Intro Overlay */}
       {!introGone && (
-        <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
+        <div
+          ref={introRef}
+          className="intro-overlay fixed inset-0 z-[2000] bg-black flex items-center justify-center text-white font-bebas text-4xl tracking-widest"
+        >
           NAVIX AI
         </div>
       )}
 
       {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
-          <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
+        <video
+          loop
+          autoPlay
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0"
+        >
+          <source
+            src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4"
+            type="video/mp4"
+          />
         </video>
 
         <div className="relative z-10">
@@ -132,7 +166,11 @@ export default function Home() {
             <h1 className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-under">
               Elevate Your Career
             </h1>
-            <h1 ref={h1OverRef} className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-over">
+            <h1
+              ref={h1OverRef}
+              className="absolute inset-0 text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-over"
+              // FIX: use absolute positioning so both h1s stack correctly
+            >
               Elevate Your Career
             </h1>
           </div>
@@ -142,7 +180,10 @@ export default function Home() {
           </p>
 
           <Link href="/dashboard">
-            <Button size="lg" className="magnetic-btn bg-white text-black hover:bg-white/90 font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest transition-none">
+            <Button
+              size="lg"
+              className="magnetic-btn bg-white text-black hover:bg-white/90 font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest transition-none"
+            >
               Initialize System <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
