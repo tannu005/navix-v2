@@ -1,146 +1,143 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { 
+  Cpu, 
+  FileText, 
+  Search, 
+  ShieldCheck, 
+  Zap, 
+  BarChart3 
+} from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const FEATURES = [
+// Register ScrollTrigger for the "linked" scroll feel
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+const features = [
   {
-    index: "01",
-    title: "AI Career Agent",
-    subtitle: "Autonomous multi-step reasoning",
-    description:
-      "A real ReAct-loop agent that plans, researches, and synthesises a personalised strategy — not a chatbot, an autonomous system.",
-    tag: "Agentic AI",
+    title: "Agentic AI Analysis",
+    description: "Instant resume scoring powered by Groq LPU technology for sub-second inference.",
+    icon: <Cpu className="w-6 h-6" />,
+    tag: "Protocol 01"
   },
   {
-    index: "02",
-    title: "Career Roadmap",
-    subtitle: "Week-by-week precision",
-    description:
-      "From where you are to where you want to be. AI-generated milestones, resources, and projects mapped to your exact timeline.",
-    tag: "Planning",
+    title: "ATS Optimization",
+    description: "Tailor your professional identity to bypass algorithmic gatekeepers with precision.",
+    icon: <ShieldCheck className="w-6 h-6" />,
+    tag: "Protocol 02"
   },
   {
-    index: "03",
-    title: "Skill Gap Analysis",
-    subtitle: "Know exactly what's missing",
-    description:
-      "Match your profile against any role. Get a score, priority gaps, quick wins, and the keywords that get you past the ATS.",
-    tag: "Intelligence",
+    title: "Real-time Tracking",
+    description: "A high-performance dashboard to manage application lifecycles and interview funnels.",
+    icon: <BarChart3 className="w-6 h-6" />,
+    tag: "Protocol 03"
   },
   {
-    index: "04",
-    title: "Salary Intelligence",
-    subtitle: "Negotiate from data",
-    description:
-      "Real ranges, top-paying companies, and a negotiation script tailored to your experience level and location.",
-    tag: "Strategy",
-  },
-  {
-    index: "05",
-    title: "Resume + ATS",
-    subtitle: "Built to be found",
-    description:
-      "AI-enhanced bullet points, an ATS score checker, and a PDF export — all in one builder.",
-    tag: "Execution",
-  },
-  {
-    index: "06",
-    title: "Job Tracker",
-    subtitle: "Your pipeline, organised",
-    description:
-      "Track every application from applied to offer. Status columns, interview dates, and salary notes in one view.",
-    tag: "Workflow",
-  },
+    title: "Interview Intelligence",
+    description: "Simulate high-stakes technical interviews with context-aware AI feedback.",
+    icon: <Zap className="w-6 h-6" />,
+    tag: "Protocol 04"
+  }
 ];
 
-function useInView(ref) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return visible;
-}
-
-function FeatureRow({ f, index }) {
-  const ref = useRef(null);
-  const visible = useInView(ref);
-
-  return (
-    <div
-      ref={ref}
-      data-card
-      className="group grid grid-cols-[80px_1fr_auto] items-start gap-8 py-10 border-b border-white/[0.06] cursor-default reveal"
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(40px)",
-        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.08}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.08}s`,
-      }}
-    >
-      <span className="text-xs tracking-widest text-white/20 pt-1 font-mono">{f.index}</span>
-
-      <div>
-        <div className="flex items-baseline gap-4 mb-3">
-          <h3
-            className="text-2xl font-medium text-white/90 group-hover:text-cyan-300 transition-colors duration-500"
-            style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.02em" }}
-          >
-            {f.title}
-          </h3>
-          <span className="text-sm text-white/30 hidden sm:block">{f.subtitle}</span>
-        </div>
-        <p className="text-white/30 text-sm leading-relaxed max-w-lg group-hover:text-white/50 transition-colors duration-500">
-          {f.description}
-        </p>
-      </div>
-
-      <span className="text-[10px] tracking-[0.2em] uppercase text-white/20 border border-white/10 px-3 py-1.5 group-hover:border-cyan-400/20 group-hover:text-cyan-400/40 transition-all duration-500 whitespace-nowrap mt-1">
-        {f.tag}
-      </span>
-    </div>
-  );
-}
-
 export default function Features() {
-  const headRef = useRef(null);
-  const headVisible = useInView(headRef);
+  const containerRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Headline Animation
+      gsap.from(".features-title", {
+        opacity: 0,
+        y: 100,
+        rotateX: -45,
+        duration: 1.5,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        }
+      });
+
+      // 2. Feature Cards "Obsidian" Unfold
+      gsap.from(".feature-card", {
+        opacity: 0,
+        y: 60,
+        scale: 0.9,
+        stagger: 0.2,
+        duration: 1,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%",
+          end: "bottom 25%",
+          toggleActions: "play none none reverse",
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section id="features" className="py-32 px-6 max-w-4xl mx-auto">
-      <div
-        ref={headRef}
-        style={{
-          opacity: headVisible ? 1 : 0,
-          transform: headVisible ? "translateY(0)" : "translateY(30px)",
-          transition:
-            "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
-        }}
-        className="mb-20 reveal"
-      >
-        <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">Capabilities</p>
-        <h2
-          className="text-5xl font-medium text-white/80"
-          style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.03em" }}
+    <section 
+      ref={sectionRef} 
+      className="relative py-32 px-4 bg-[#050505]"
+      id="features"
+    >
+      <div className="container mx-auto max-w-6xl">
+        {/* Header Section */}
+        <div className="mb-24 text-center">
+          <span className="inline-block text-[10px] uppercase tracking-[0.5em] text-primary mb-4 font-syne">
+            Core Capabilities
+          </span>
+          <h2 className="features-title text-6xl md:text-8xl font-bebas leading-none uppercase">
+            System <span className="text-white/20">Features</span>
+          </h2>
+        </div>
+
+        {/* Features Grid */}
+        <div 
+          ref={containerRef}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          Everything you need<br />
-          <span className="text-white/30">to move forward.</span>
-        </h2>
+          {features.map((feature, index) => (
+            <div 
+              key={index}
+              className="feature-card glass-panel group relative p-10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-primary/50"
+              data-card
+            >
+              {/* Technical protocol tag */}
+              <div className="absolute top-6 right-8 text-[9px] font-mono opacity-30 tracking-widest uppercase">
+                {feature.tag}
+              </div>
+
+              {/* Icon with Groq-themed Glow */}
+              <div className="mb-8 p-3 w-fit rounded-lg bg-white/5 border border-white/10 text-primary group-hover:scale-110 group-hover:bg-primary/10 transition-transform duration-500">
+                {feature.icon}
+              </div>
+
+              <h3 className="text-2xl font-syne font-bold mb-4 tracking-tight">
+                {feature.title}
+              </h3>
+              
+              <p className="text-zinc-500 font-dm leading-relaxed max-w-sm">
+                {feature.description}
+              </p>
+
+              {/* Bottom Decorative Line */}
+              <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary transition-all duration-700 group-hover:w-full" />
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div>
-        {FEATURES.map((f, i) => (
-          <FeatureRow key={f.index} f={f} index={i} />
-        ))}
-      </div>
+      {/* Background Decorative element */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none z-0" />
     </section>
   );
 }
