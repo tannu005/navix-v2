@@ -1,37 +1,23 @@
-/* 1. MANDATORY: FONTS MUST BE ON LINE 1 */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
 
-/* 2. TAILWIND DIRECTIVES */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --primary: 199 89% 60%;
-  }
-
   body {
     @apply bg-[#050505] text-white antialiased;
     font-family: 'DM Sans', sans-serif;
+    cursor: none;
     overflow-x: hidden;
-    cursor: none; /* Required for the Obsidian string effect */
-    
-    /* Technical Grid Background */
-    background-image: 
-      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
   }
 }
 
 @layer utilities {
   .intro-overlay {
-    @apply fixed inset-0 z-[2000] flex items-center justify-center bg-black text-primary font-bebas text-7xl;
-    transform-origin: top;
+    @apply fixed inset-0 z-[2000] flex items-center justify-center bg-black text-[#c7593c] font-bebas text-7xl;
   }
 
-  /* Obsidian Masked Headline */
   .headline-under {
     color: rgba(255, 255, 255, 0.05);
     mix-blend-mode: exclusion;
@@ -39,26 +25,14 @@
 
   .headline-over {
     color: white;
-    filter: drop-shadow(0 0 20px hsl(199, 89%, 60% / 0.3));
+    filter: drop-shadow(0 0 20px rgba(199, 89, 60, 0.3));
     -webkit-mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
     mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
   }
-
-  .fade-up {
-    opacity: 0;
-    animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Cinematic Grain */
 body::after {
   content: "";
   @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  mix-blend-mode: screen;
 }
