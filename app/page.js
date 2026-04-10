@@ -33,7 +33,7 @@ export default function Home() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
-    // Standardize canvas sizing
+    // Handle Canvas Resizing
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -66,7 +66,7 @@ export default function Home() {
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
         
-        // Use CSS variables to sync with globals.css
+        // Sync with CSS variables in globals.css
         h1OverRef.current.style.setProperty('--x', `${x}px`);
         h1OverRef.current.style.setProperty('--y', `${y}px`);
         
@@ -90,8 +90,11 @@ export default function Home() {
         onMouseMove={(e) => { mouse.current = { x: e.clientX, y: e.clientY } }} 
         className="relative min-h-screen bg-[#050505]"
       >
-        {/* Canvas remains in the DOM but is only "active" after mount */}
-        <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
+        {/* Render canvas but control visibility to prevent hydration flash */}
+        <canvas 
+          ref={canvasRef} 
+          className={`fixed inset-0 pointer-events-none z-[1001] transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`} 
+        />
 
         <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
           <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
@@ -114,7 +117,7 @@ export default function Home() {
             </div>
 
             <Link href="/dashboard">
-              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:bg-[#c7593c] hover:text-white transition-colors duration-300">
+              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:bg-[#c7593c] hover:text-white transition-all duration-300">
                 Initialize System <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
