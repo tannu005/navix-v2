@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ReactLenis } from '@studio-freight/react-lenis';
 import gsap from "gsap";
 
-// Ensure these components exist in your directory
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
@@ -21,16 +20,15 @@ export default function Home() {
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
-  // 1. Force client-side mount only
+  // Guard for Next.js 15 Hydration
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 2. Initialize browser-only logic (GSAP & Physics)
   useEffect(() => {
     if (!mounted) return;
 
-    // Entrance Animation
+    // Entrance wiping animation
     const introTl = gsap.to(introRef.current, { 
       scaleY: 0, 
       duration: 1.5, 
@@ -40,7 +38,7 @@ export default function Home() {
     });
 
     const tick = () => {
-      // String Physics logic
+      // String Cursor Physics logic
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext("2d");
@@ -68,14 +66,14 @@ export default function Home() {
         ctx.stroke();
       }
 
-      // Headline Mask Position
+      // Headline Mask Reveal logic
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
-        const maskValue = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMaskImage = maskValue;
-        h1OverRef.current.style.maskImage = maskValue;
+        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMaskImage = mask;
+        h1OverRef.current.style.maskImage = mask;
       }
 
       requestAnimationFrame(tick);
@@ -89,27 +87,23 @@ export default function Home() {
     };
   }, [mounted]);
 
-  // HYDRATION GUARD: Prevents deployment "window is not defined" error
+  // Prevent Hydration mismatch on deploy
   if (!mounted) return null;
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
       <main 
         onMouseMove={(e) => { mouse.current = { x: e.clientX, y: e.clientY } }} 
-        className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30"
+        className="relative min-h-screen bg-[#050505]"
       >
-        
-        {/* String Physics Cursor */}
         <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
-        {/* Intro Wipe */}
         {!introGone && (
           <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
             NAVIX AI
           </div>
         )}
 
-        {/* Hero Section */}
         <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
           <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
             <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
