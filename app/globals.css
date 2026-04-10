@@ -1,4 +1,4 @@
-/* 1. MANDATORY: FONTS FIRST */
+/* 1. MANDATORY: FONTS MUST BE ON LINE 1 */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
 
 /* 2. TAILWIND DIRECTIVES */
@@ -7,11 +7,15 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: 199 89% 60%;
+  }
+
   body {
     @apply bg-[#050505] text-white antialiased;
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
-    cursor: none; /* REQUIRED for the Obsidian string effect */
+    cursor: none; /* Required for the Obsidian string effect */
     
     /* Technical Grid Background */
     background-image: 
@@ -27,7 +31,7 @@
     transform-origin: top;
   }
 
-  /* Obsidian Masked Headline Reveal */
+  /* Obsidian Masked Headline */
   .headline-under {
     color: rgba(255, 255, 255, 0.05);
     mix-blend-mode: exclusion;
@@ -40,12 +44,18 @@
     mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
   }
 
-  .glass-card {
-    @apply bg-white/[0.01] backdrop-blur-2xl border border-white/5 shadow-2xl;
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 }
 
-/* Global Grain Texture Overlay */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cinematic Grain */
 body::after {
   content: "";
   @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
