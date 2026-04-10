@@ -8,7 +8,7 @@
   body {
     @apply bg-[#050505] text-white antialiased;
     font-family: 'DM Sans', sans-serif;
-    cursor: none;
+    cursor: none; /* Required for string cursor */
     overflow-x: hidden;
   }
 }
@@ -26,11 +26,13 @@
   .headline-over {
     color: white;
     filter: drop-shadow(0 0 20px rgba(199, 89, 60, 0.3));
+    /* Initial mask state */
     -webkit-mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
     mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
   }
 }
 
+/* Cinematic Grain Overlay */
 body::after {
   content: "";
   @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
