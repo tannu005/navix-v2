@@ -1,4 +1,4 @@
-/* 1. ALL @IMPORT RULES MUST BE AT THE VERY TOP */
+/* 1. MANDATORY: FONTS FIRST */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
 
 /* 2. TAILWIND DIRECTIVES */
@@ -7,16 +7,11 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --primary: 199 89% 60%;
-    --accent: 25 100% 50%; /* Groq Orange */
-  }
-
   body {
     @apply bg-[#050505] text-white antialiased;
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
-    cursor: none; /* Hide default cursor for the follow-string effect */
+    cursor: none; /* REQUIRED for the Obsidian string effect */
     
     /* Technical Grid Background */
     background-image: 
@@ -27,6 +22,12 @@
 }
 
 @layer utilities {
+  .intro-overlay {
+    @apply fixed inset-0 z-[2000] flex items-center justify-center bg-black text-primary font-bebas text-7xl;
+    transform-origin: top;
+  }
+
+  /* Obsidian Masked Headline Reveal */
   .headline-under {
     color: rgba(255, 255, 255, 0.05);
     mix-blend-mode: exclusion;
@@ -34,23 +35,17 @@
 
   .headline-over {
     color: white;
-    filter: drop-shadow(0 0 20px hsl(var(--primary) / 0.3));
+    filter: drop-shadow(0 0 20px hsl(199, 89%, 60% / 0.3));
     -webkit-mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
     mask: radial-gradient(circle 250px at 50% 50%, black, transparent);
   }
 
-  .fade-up {
-    opacity: 0;
-    animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .glass-card {
+    @apply bg-white/[0.01] backdrop-blur-2xl border border-white/5 shadow-2xl;
   }
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Global Grain Texture */
+/* Global Grain Texture Overlay */
 body::after {
   content: "";
   @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
