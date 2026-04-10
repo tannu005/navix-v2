@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ReactLenis } from '@studio-freight/react-lenis';
 import gsap from "gsap";
 
-// Ensure these components exist in your directory
+// Ensure these sub-components exist in your directory
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
@@ -18,36 +18,37 @@ export default function Home() {
   const introRef = useRef(null);
   const h1OverRef = useRef(null);
   const canvasRef = useRef(null);
-  
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
-  // 1. Mount Guard - Required for Next.js 15
+  // 1. Next.js 15 Hydration Guard
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 2. Animation Engine - Only runs in the browser
+  // 2. Browser-only Logic
   useEffect(() => {
     if (!mounted) return;
 
-    // Entrance Wipe
-    const introTl = gsap.to(introRef.current, { 
-      scaleY: 0, 
-      duration: 1.5, 
-      ease: "expo.inOut", 
-      transformOrigin: "top",
-      onComplete: () => setIntroGone(true)
+    let ctx = gsap.context(() => {
+      // Entrance Animation
+      gsap.to(introRef.current, { 
+        scaleY: 0, 
+        duration: 1.5, 
+        ease: "expo.inOut", 
+        transformOrigin: "top",
+        onComplete: () => setIntroGone(true)
+      });
     });
 
     const tick = () => {
-      // String Physics Cursor
+      // String Cursor Canvas
       const canvas = canvasRef.current;
       if (canvas) {
-        const ctx = canvas.getContext("2d");
+        const context = canvas.getContext("2d");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
         let px = mouse.current.x;
         let py = mouse.current.y;
@@ -59,17 +60,17 @@ export default function Home() {
           py = p.y;
         });
 
-        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)"; // Groq Orange
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(points.current[0].x, points.current[0].y);
+        context.strokeStyle = "rgba(199, 89, 60, 0.4)";
+        context.lineWidth = 1.5;
+        context.beginPath();
+        context.moveTo(points.current[0].x, points.current[0].y);
         for (let i = 1; i < points.current.length; i++) {
-          ctx.lineTo(points.current[i].x, points.current[i].y);
+          context.lineTo(points.current[i].x, points.current[i].y);
         }
-        ctx.stroke();
+        context.stroke();
       }
 
-      // Dynamic Mask Reveal
+      // Headline Mask logic
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
@@ -83,47 +84,40 @@ export default function Home() {
     };
 
     const frameId = requestAnimationFrame(tick);
-    
     return () => {
       cancelAnimationFrame(frameId);
-      introTl.kill();
+      ctx.revert();
     };
   }, [mounted]);
 
-  // Handle Mouse Movement
   const handleMouseMove = (e) => {
     mouse.current = { x: e.clientX, y: e.clientY };
 
-    // Magnetic interaction for buttons
+    // Magnetic UI logic
     const btns = document.querySelectorAll(".magnetic-btn");
     btns.forEach(btn => {
       const rect = btn.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) * 0.2;
-      const y = (e.clientY - rect.top - rect.height / 2) * 0.2;
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.25;
       gsap.to(btn, { x, y, duration: 0.4, ease: "power2.out" });
     });
   };
 
-  // IF NOT MOUNTED: Return null to prevent Hydration Mismatch
+  // Critical: Prevents hydration mismatch by rendering nothing on server
   if (!mounted) return null;
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
-      <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-orange-500/30">
-        
-        {/* String Cursor */}
+      <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30">
         <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
-        {/* Intro Curtain */}
         {!introGone && (
           <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
             NAVIX AI
           </div>
         )}
 
-        {/* Hero Section */}
         <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-          {/* Atmosphere Video */}
           <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
             <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
           </video>
@@ -131,7 +125,7 @@ export default function Home() {
           <div className="relative z-10 max-w-5xl">
             <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.4em] font-syne text-[#c7593c]">
               <Sparkles className="w-3 h-3" />
-              Agentic Protocol Active
+              Agentic AI Intelligence
             </div>
 
             <div className="relative mb-8">
@@ -144,7 +138,7 @@ export default function Home() {
             </div>
 
             <p className="max-w-md mx-auto text-zinc-500 font-dm text-lg mb-12 tracking-tight">
-              High-performance workspace for optimized resumes and interview intelligence.
+              High-performance workspace for optimized resumes and interview mastery.
             </p>
 
             <Link href="/dashboard">
@@ -155,7 +149,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Content Layers */}
         <div className="relative z-20 space-y-40 pb-40">
           <Features />
           <HowItWorks />
