@@ -1,73 +1,29 @@
-/* 1. MANDATORY: ALL @IMPORT RULES MUST BE AT THE VERY TOP */
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
-
-/* 2. TAILWIND DIRECTIVES */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --primary: 199 89% 60%;
-    --background: 222 20% 6%;
-    --foreground: 210 20% 95%;
-  }
-
-  body {
-    @apply bg-[#05070a] text-white;
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-    cursor: none; /* Required for the string cursor follow effect */
-  }
+:root {
+  --primary: 199 89% 60%;
 }
 
-@layer utilities {
-  /* Pixelated Reveal Mask Logic */
-  .headline-under {
-    color: rgba(255, 255, 255, 0.08);
-    mix-blend-mode: exclusion;
-    position: relative;
-    z-index: 1;
-  }
-
-  .headline-over {
-    color: white;
-    position: absolute;
-    top: 0; 
-    left: 0;
-    width: 100%;
-    z-index: 10;
-    pointer-events: none;
-    /* Glow effect for the revealed text */
-    filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.5));
-    -webkit-mask: radial-gradient(circle 300px at 50% 50%, black, transparent);
-    mask: radial-gradient(circle 300px at 50% 50%, black, transparent);
-  }
-
-  /* Cinematic Animation Helpers */
-  .cin-letter {
-    @apply inline-block;
-    will-change: transform, opacity;
-  }
-
-  .fade-up {
-    opacity: 0;
-    animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
+body {
+  cursor: none;
+  overflow-x: hidden;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Cinematic Film Grain Overlay */
+/* Cinematic Grain */
 body::after {
   content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.3;
+  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' ... /%3E");
+  mix-blend-mode: screen;
 }
+
+/* Obsidian Typography Transitions */
+.logo-text {
+  transition: font-family 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+              letter-spacing 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.font-bebas { font-family: var(--font-bebas); }
+.font-syne { font-family: var(--font-syne); }
