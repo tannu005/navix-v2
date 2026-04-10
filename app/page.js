@@ -1,85 +1,146 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ReactLenis } from '@studio-freight/react-lenis';
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import Features from "@/components/features";
+import HowItWorks from "@/components/how-it-works";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const [logoFont, setLogoFont] = useState("font-bebas");
-  const containerRef = useRef(null);
+  const [introGone, setIntroGone] = useState(false);
+  
+  const introRef = useRef(null);
+  const h1OverRef = useRef(null);
+  const canvasRef = useRef(null);
   const mouse = useRef({ x: 0, y: 0 });
+  const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
+  // 1. Next.js 15 Hydration Guard - CRITICAL
   useEffect(() => {
     setMounted(true);
-    
-    // 1. Dynamic Logo Font Swap based on scroll
-    ScrollTrigger.create({
-      trigger: "#features",
-      start: "top center",
-      onEnter: () => setLogoFont("font-syne"),
-      onLeaveBack: () => setLogoFont("font-bebas"),
+  }, []);
+
+  // 2. Client-only Animation logic
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Entrance Animation
+    const introTl = gsap.to(introRef.current, { 
+      scaleY: 0, 
+      duration: 1.5, 
+      ease: "expo.inOut", 
+      transformOrigin: "top",
+      onComplete: () => setIntroGone(true)
     });
 
-    // 2. Obsidian Section "Assembly" Animation
-    const sections = gsap.utils.toArray(".obsidian-section");
-    sections.forEach((section) => {
-      gsap.fromTo(section, 
-        { scale: 0.8, opacity: 0, rotateX: -10 },
-        { 
-          scale: 1, opacity: 1, rotateX: 0,
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "top center",
-            scrub: 1,
-          }
+    const tick = () => {
+      // String Physics Logic
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let px = mouse.current.x;
+        let py = mouse.current.y;
+
+        points.current.forEach((p) => {
+          p.x += (px - p.x) * 0.35;
+          p.y += (py - p.y) * 0.35;
+          px = p.x;
+          py = p.y;
+        });
+
+        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(points.current[0].x, points.current[0].y);
+        for (let i = 1; i < points.current.length; i++) {
+          ctx.lineTo(points.current[i].x, points.current[i].y);
         }
-      );
-    });
+        ctx.stroke();
+      }
+
+      // Headline Mask logic
+      if (h1OverRef.current) {
+        const rect = h1OverRef.current.getBoundingClientRect();
+        const x = mouse.current.x - rect.left;
+        const y = mouse.current.y - rect.top;
+        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMaskImage = mask;
+        h1OverRef.current.style.maskImage = mask;
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    const frameId = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frameId);
+      introTl.kill();
+    };
   }, [mounted]);
 
+  const handleMouseMove = (e) => {
+    mouse.current = { x: e.clientX, y: e.clientY };
+  };
+
+  // IF NOT MOUNTED: Return null to prevent server/client HTML mismatch
   if (!mounted) return null;
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
-      <main className="relative">
+      <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505]">
         
-        {/* Dynamic Logo Navigation */}
-        <nav className="fixed top-0 w-full z-[1000] p-8 flex justify-between items-center mix-blend-difference">
-          <div className={`logo-text text-4xl uppercase tracking-tighter ${logoFont}`}>
-            Navix
+        {/* Physics Canvas */}
+        <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
+
+        {/* Cinematic Entrance */}
+        {!introGone && (
+          <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
+            NAVIX AI
           </div>
-          <div className="font-dm text-[10px] uppercase tracking-[0.5em]">Menu</div>
-        </nav>
+        )}
 
         {/* Hero Section */}
-        <section className="obsidian-section h-screen flex items-center justify-center">
-          <h1 className="text-[15vw] font-bebas leading-none uppercase text-center">
-            Digital <br /> <span className="text-primary">Assembly</span>
-          </h1>
-        </section>
+        <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+          <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
+            <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
+          </video>
 
-        {/* Features Section (Triggers Logo Morph) */}
-        <section id="features" className="obsidian-section min-h-screen bg-white text-black p-24">
-          <div className="grid grid-cols-2 gap-24">
-            <div className="space-y-8">
-              <span className="font-syne text-xs uppercase tracking-widest">Protocol 001</span>
-              <h2 className="text-8xl font-bebas uppercase leading-none">Automated Intelligence</h2>
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.4em] font-syne text-[#c7593c]">
+              <Sparkles className="w-3 h-3" />
+              Agentic Protocol Active
             </div>
-            <div className="flex items-end">
-              <p className="font-dm text-2xl leading-tight">
-                Rebuilding the interface of career growth through precision agentic workflows.
-              </p>
+
+            <div className="relative mb-8">
+              <h1 className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-under">
+                Elevate Your Career
+              </h1>
+              <h1 ref={h1OverRef} className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-over">
+                Elevate Your Career
+              </h1>
             </div>
+
+            <Link href="/dashboard">
+              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest transition-none">
+                Initialize System <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
           </div>
         </section>
 
+        <div className="relative z-20 space-y-40 pb-40">
+          <Features />
+          <HowItWorks />
+        </div>
       </main>
     </ReactLenis>
   );
