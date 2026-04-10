@@ -1,120 +1,52 @@
-import { Inter } from "next/font/google";
+import { Inter, Syne, DM_Sans, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { dark } from "@clerk/themes";
+import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"] });
+// 1. Initialize Obsidian-style Fonts
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm" });
+const bebasNeue = Bebas_Neue({ 
+  weight: "400", 
+  subsets: ["latin"], 
+  variable: "--font-bebas" 
+});
 
 export const metadata = {
   title: {
     default: "Navix — AI Career Coach",
     template: "%s | Navix",
   },
-  description:
-    "Advance your career with AI-powered resume building, interview prep, cover letters, and industry insights.",
-  keywords: ["AI career coach", "resume builder", "interview prep", "job tracker", "cover letter"],
-  openGraph: {
-    title: "Navix — AI Career Coach",
-    description: "Your AI-powered career growth platform.",
-    type: "website",
-  },
+  description: "Advance your career with AI-powered resume building, interview prep, and industry insights.",
+  keywords: ["AI career coach", "Groq AI", "resume builder", "interview prep"],
 };
-
-// Cursor script constant
-const cursorScript = `
-(function() {
-  const core  = document.getElementById('cursor-core');
-  const ring  = document.getElementById('cursor-ring');
-  const canvas = document.getElementById('cursor-trail');
-  if (!core || !ring || !canvas) return;
-
-  const ctx = canvas.getContext('2d');
-  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const mouse = { x: -200, y: -200 };
-  const rPos  = { x: -200, y: -200 };
-  const TRAIL = 16;
-  const trail = Array.from({ length: TRAIL }, () => ({ x: -200, y: -200 }));
-
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest('a,button')) document.body.classList.add('cursor-hover');
-    else if (e.target.closest('[data-card]')) document.body.classList.add('cursor-card');
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest('a,button')) document.body.classList.remove('cursor-hover');
-    else if (e.target.closest('[data-card]')) document.body.classList.remove('cursor-card');
-  });
-
-  function tick() {
-    const ease = document.body.classList.contains('cursor-card') ? 0.07
-               : document.body.classList.contains('cursor-hover') ? 0.14 : 0.10;
-    rPos.x += (mouse.x - rPos.x) * ease;
-    rPos.y += (mouse.y - rPos.y) * ease;
-
-    core.style.left = mouse.x + 'px'; core.style.top = mouse.y + 'px';
-    ring.style.left = rPos.x  + 'px'; ring.style.top = rPos.y  + 'px';
-
-    trail.unshift({ x: rPos.x, y: rPos.y });
-    trail.length = TRAIL;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (trail.length > 2) {
-      ctx.beginPath();
-      ctx.moveTo(mouse.x, mouse.y);
-      for (let i = 0; i < trail.length - 1; i++) {
-        const mx = (trail[i].x + trail[i+1].x) / 2;
-        const my = (trail[i].y + trail[i+1].y) / 2;
-        ctx.quadraticCurveTo(trail[i].x, trail[i].y, mx, my);
-      }
-      const g = ctx.createLinearGradient(mouse.x, mouse.y, trail[TRAIL-1].x, trail[TRAIL-1].y);
-      g.addColorStop(0, 'rgba(0,200,255,0.5)');
-      g.addColorStop(1, 'rgba(0,200,255,0)');
-      ctx.strokeStyle = g;
-      ctx.lineWidth = 1.2;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-    }
-    requestAnimationFrame(tick);
-  }
-  tick();
-
-  // Scroll reveal
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-})();
-`;
 
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className="dark">
         <head>
           <link rel="icon" href="/logo.png" sizes="any" />
         </head>
-        <body className={inter.className}>
-          {/* Custom cursor elements */}
-          <canvas
-            id="cursor-trail"
-            style={{
-              position: "fixed",
-              inset: 0,
-              pointerEvents: "none",
-              zIndex: 99997,
-            }}
-          />
-          <div id="cursor-core" />
-          <div id="cursor-ring" />
+        <body 
+          className={cn(
+            "min-h-screen bg-[#050505] antialiased selection:bg-primary/30",
+            inter.variable,
+            syne.variable,
+            dmSans.variable,
+            bebasNeue.variable
+          )}
+        >
+          {/* The Cursor Trail and "String" physics are now handled 
+             within the Page components using GSAP for better performance 
+             and to prevent hydration mismatches.
+          */}
 
-          {/* App content */}
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -122,22 +54,28 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             <Header />
-            <main className="min-h-screen">{children}</main>
-            <Toaster richColors />
-            <footer
-              style={{
-                borderTop: "1px solid hsl(222, 15%, 12%)",
-                background: "hsl(222, 20%, 5%)",
-              }}
-              className="py-10"
-            >
-              <div className="container mx-auto px-4 text-center">
-                <p className="text-sm text-muted-foreground">
+            
+            {/* Main content wrapper */}
+            <main className="relative min-h-screen">
+              {children}
+            </main>
+
+            <Toaster richColors position="bottom-right" />
+
+            {/* Obsidian-Style Technical Footer */}
+            <footer className="relative z-10 py-12 border-t border-white/5 bg-[#050505]">
+              <div className="container mx-auto px-4 flex flex-col items-center gap-4">
+                <div className="flex items-center gap-4 opacity-50 grayscale">
+                  <div className="h-[1px] w-12 bg-white" />
+                  <span className="text-[10px] uppercase tracking-[0.4em] font-syne">
+                    System Protocol v2.0
+                  </span>
+                  <div className="h-[1px] w-12 bg-white" />
+                </div>
+                
+                <p className="text-[11px] font-dm tracking-widest text-muted-foreground uppercase">
                   Built by{" "}
-                  <span
-                    className="font-semibold"
-                    style={{ color: "hsl(199, 89%, 60%)" }}
-                  >
+                  <span className="text-white font-semibold">
                     Tannu Yadav
                   </span>{" "}
                   · VIT-AP University · 2026
@@ -145,9 +83,6 @@ export default function RootLayout({ children }) {
               </div>
             </footer>
           </ThemeProvider>
-
-          {/* Inject cursor script */}
-          <script dangerouslySetInnerHTML={{ __html: cursorScript }} />
         </body>
       </html>
     </ClerkProvider>
