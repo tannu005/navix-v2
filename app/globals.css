@@ -1,98 +1,67 @@
-/* 1. EXTERNAL FONT IMPORTS - Must be at the very top of the file */
-@import url('https://fonts.googleapis.com/css2?family=Alkatra&family=Anton&family=Bebas+Neue&family=Jost:ital,wght@1,600&family=Lexend:wght@700&family=Nova+Oval&family=Oswald:wght@500&family=PT+Serif:wght@700&family=Titillium+Web&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+/* ALL font imports from cinematic zip MUST be at the very top */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
 
-/* 2. TAILWIND DIRECTIVES */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 3. BASE THEME & GLOBAL STYLES */
 @layer base {
-  :root {
-    --background: 222 20% 6%;
-    --foreground: 210 20% 95%;
-    --card: 222 18% 8%;
-    --card-foreground: 210 20% 95%;
-    --popover: 222 18% 8%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 199 89% 60%;
-    --primary-foreground: 222 20% 6%;
-    --secondary: 222 15% 12%;
-    --secondary-foreground: 210 20% 85%;
-    --muted: 222 15% 11%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 222 15% 13%;
-    --accent-foreground: 210 20% 90%;
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 222 15% 14%;
-    --input: 222 15% 13%;
-    --ring: 199 89% 60%;
-    --radius: 0.6rem;
-  }
-
-  * {
-    @apply border-border;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
   body {
     @apply bg-[#05070a] text-white;
     font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden; /* Prevent horizontal shaking during cinematic transitions */
-    cursor: none; /* REQUIRED: Hides default cursor so the string-cursor can work */
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none; /* Hide standard cursor for the follow-string effect */
   }
 }
 
-/* 4. CINEMATIC HERO & UTILITIES */
 @layer utilities {
   .intro-overlay {
     @apply fixed inset-0 z-[1000] flex items-center justify-center bg-black text-primary font-bebas text-6xl;
     transform-origin: top;
   }
 
-  /* Support for the cinematic letter animation (prevents line breaks) */
-  .cin-letter {
-    @apply inline-block;
-    will-change: transform, opacity;
+  /* Cinematic Utilities */
+  .cin-letter { @apply inline-block; will-change: transform, opacity; }
+  .fade-up { opacity: 0; animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  .trail-img { @apply absolute object-cover pointer-events-none z-[12]; transform-origin: center; will-change: transform, opacity; }
+
+  /* MASKED HEADLINE STYLES */
+  
+  .headline-under {
+    color: rgba(255,255,255,0.08); /* Dim base text */
+    mix-blend-mode: exclusion;
+    position: relative;
+    z-index: 1;
   }
 
-  /* Fade-up animation for sub-headlines and buttons */
-  .fade-up {
-    opacity: 0;
-    animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  .headline-over {
+    color: white; /* The text that is revealed */
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    z-index: 10;
+    pointer-events: none; /* Let clicks pass through to the dim text */
+    
+    /* Pixelation/drop-shadow effect from your request */
+    filter: drop-shadow(4px 0 4px hsl(var(--primary))) drop-shadow(-4px 0 4px hsl(199, 89%, 40%));
+    
+    /* The circular reveal mask */
+    -webkit-mask: radial-gradient(circle 300px at 50% 50%, black, transparent);
+    mask: radial-gradient(circle 300px at 50% 50%, black, transparent);
   }
-
-  /* Status Badges for Job Tracking */
-  .status-applied      { @apply bg-blue-500/15 text-blue-400 border-blue-500/25; }
-  .status-interviewing { @apply bg-amber-500/15 text-amber-400 border-amber-500/25; }
-  .status-offered      { @apply bg-emerald-500/15 text-emerald-400 border-emerald-500/25; }
-  .status-rejected     { @apply bg-red-500/15 text-red-400 border-red-500/25; }
 }
 
-/* 5. CUSTOM ANIMATIONS */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Background Noise Texture for a cinematic, premium feel */
+/* Base noise and grid texture from repository */
 body::after {
   content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("https://assets.codepen.io/7558/noise-002.png");
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.05;
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  mix-blend-mode: screen;
+  opacity: 0.4;
 }
