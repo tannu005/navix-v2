@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
-// Dynamic import for Lenis with a more robust SSR guard
+// Dynamic import for Lenis to prevent SSR issues
 const ReactLenis = dynamic(() => import('@studio-freight/react-lenis').then(mod => mod.ReactLenis), {
   ssr: false
 });
@@ -22,32 +22,23 @@ export default function Home() {
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
-  // 1. Handle Mounting to prevent hydration errors
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  // 2. Handle Canvas & Mask Animation
-  useEffect(() => {
-    if (!mounted) return;
-
+    
+    // Canvas & Mask Logic
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
-    
-    // Set initial size
-    const resizeCanvas = () => {
+
+    const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-    
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
     const tick = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       let px = mouse.current.x;
       let py = mouse.current.y;
 
@@ -62,23 +53,15 @@ export default function Home() {
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(points.current[0].x, points.current[0].y);
-      for (let i = 1; i < points.current.length; i++) {
-        ctx.lineTo(points.current[i].x, points.current[i].y);
-      }
+      for (let i = 1; i < points.current.length; i++) ctx.lineTo(points.current[i].x, points.current[i].y);
       ctx.stroke();
 
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
-        
-        // Using CSS variables for cleaner integration with your globals.css
-        h1OverRef.current.style.setProperty('--mouse-x', `${x}px`);
-        h1OverRef.current.style.setProperty('--mouse-y', `${y}px`);
-        
-        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMaskImage = mask;
-        h1OverRef.current.style.maskImage = mask;
+        h1OverRef.current.style.setProperty('--x', `${x}px`);
+        h1OverRef.current.style.setProperty('--y', `${y}px`);
       }
       requestAnimationFrame(tick);
     };
@@ -86,22 +69,21 @@ export default function Home() {
     const animId = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [mounted]);
+  }, []);
 
-  // IMPORTANT: For Next.js, it's safer to render the skeleton 
-  // and only "activate" the JS-heavy parts after mounting.
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
       <main 
         onMouseMove={(e) => { mouse.current = { x: e.clientX, y: e.clientY } }} 
-        className="relative min-h-screen bg-[#050505] selection:bg-white/20"
+        className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30"
       >
-        {/* Only show canvas and heavy effects once mounted */}
-        {mounted && (
-          <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
-        )}
+        {/* Canvas rendered but invisible until mounted to maintain hydration structure */}
+        <canvas 
+          ref={canvasRef} 
+          className={`fixed inset-0 pointer-events-none z-[1001] transition-opacity duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`} 
+        />
 
         <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
           <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
@@ -114,7 +96,7 @@ export default function Home() {
               Agentic AI Intelligence
             </div>
 
-            <div className="relative mb-8">
+            <div className="relative mb-8 group">
               <h1 className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-under">
                 Elevate Your Career
               </h1>
@@ -124,7 +106,7 @@ export default function Home() {
             </div>
 
             <Link href="/dashboard">
-              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-transform">
+              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:bg-[#c7593c] hover:text-white transition-all duration-300">
                 Initialize System <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
