@@ -7,9 +7,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { dark } from "@clerk/themes";
 import { cn } from "@/lib/utils";
 
-// 1. Initialize Obsidian-style Fonts
+// 1. Initialize High-Performance Fonts
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
+const syne = Syne({ 
+  subsets: ["latin"], 
+  variable: "--font-syne",
+  weight: ["400", "800"] // Support both normal and bold styles
+});
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm" });
 const bebasNeue = Bebas_Neue({ 
   weight: "400", 
@@ -29,24 +33,22 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
+      {/* suppressHydrationWarning is good here because ThemeProvider 
+         modifies the HTML class on the client 
+      */}
       <html lang="en" suppressHydrationWarning className="dark">
         <head>
           <link rel="icon" href="/logo.png" sizes="any" />
         </head>
         <body 
           className={cn(
-            "min-h-screen bg-[#050505] antialiased selection:bg-primary/30",
+            "min-h-screen bg-[#050505] antialiased selection:bg-[#c7593c]/30",
             inter.variable,
             syne.variable,
             dmSans.variable,
             bebasNeue.variable
           )}
         >
-          {/* The Cursor Trail and "String" physics are now handled 
-             within the Page components using GSAP for better performance 
-             and to prevent hydration mismatches.
-          */}
-
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -55,8 +57,10 @@ export default function RootLayout({ children }) {
           >
             <Header />
             
-            {/* Main content wrapper */}
-            <main className="relative min-h-screen">
+            {/* Main content wrapper: 
+                relative z-0 ensures children stay behind global overlays like the grain 
+            */}
+            <main className="relative z-0 min-h-screen">
               {children}
             </main>
 
@@ -65,7 +69,7 @@ export default function RootLayout({ children }) {
             {/* Obsidian-Style Technical Footer */}
             <footer className="relative z-10 py-12 border-t border-white/5 bg-[#050505]">
               <div className="container mx-auto px-4 flex flex-col items-center gap-4">
-                <div className="flex items-center gap-4 opacity-50 grayscale">
+                <div className="flex items-center gap-4 opacity-30 grayscale">
                   <div className="h-[1px] w-12 bg-white" />
                   <span className="text-[10px] uppercase tracking-[0.4em] font-syne">
                     System Protocol v2.0
@@ -73,7 +77,7 @@ export default function RootLayout({ children }) {
                   <div className="h-[1px] w-12 bg-white" />
                 </div>
                 
-                <p className="text-[11px] font-dm tracking-widest text-muted-foreground uppercase">
+                <p className="text-[10px] font-dm tracking-[0.2em] text-muted-foreground uppercase">
                   Built by{" "}
                   <span className="text-white font-semibold">
                     Tannu Yadav
