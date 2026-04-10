@@ -1,48 +1,73 @@
-/* 1. MANDATORY: FONTS MUST BE ON LINE 1 */
+/* 1. MANDATORY: ALL @IMPORT RULES MUST BE AT THE VERY TOP */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
 
+/* 2. TAILWIND DIRECTIVES */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: 199 89% 60%;
+    --background: 222 20% 6%;
+    --foreground: 210 20% 95%;
+  }
+
   body {
-    @apply bg-[#050505] text-white antialiased;
+    @apply bg-[#05070a] text-white;
     font-family: 'DM Sans', sans-serif;
-    cursor: none; /* Required for string cursor */
     overflow-x: hidden;
+    cursor: none; /* Required for the string cursor follow effect */
   }
 }
 
 @layer utilities {
-  .intro-overlay {
-    @apply fixed inset-0 z-[2000] flex items-center justify-center bg-black text-[#c7593c] font-bebas text-7xl;
-    transform-origin: top;
-  }
-
-  /* Two-layer Obsidian Reveal */
+  /* Pixelated Reveal Mask Logic */
   .headline-under {
-    @apply text-white/5;
+    color: rgba(255, 255, 255, 0.08);
     mix-blend-mode: exclusion;
     position: relative;
     z-index: 1;
   }
 
   .headline-over {
-    @apply absolute top-0 left-0 w-full text-white;
+    color: white;
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%;
     z-index: 10;
     pointer-events: none;
-    filter: drop-shadow(0 0 15px rgba(199, 89, 60, 0.3));
-    /* Cross-browser masking logic */
-    -webkit-mask-image: radial-gradient(circle 250px at 50% 50%, black, transparent);
-    mask-image: radial-gradient(circle 250px at 50% 50%, black, transparent);
+    /* Glow effect for the revealed text */
+    filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.5));
+    -webkit-mask: radial-gradient(circle 300px at 50% 50%, black, transparent);
+    mask: radial-gradient(circle 300px at 50% 50%, black, transparent);
+  }
+
+  /* Cinematic Animation Helpers */
+  .cin-letter {
+    @apply inline-block;
+    will-change: transform, opacity;
+  }
+
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 }
 
-/* Global Film Grain Overlay */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cinematic Film Grain Overlay */
 body::after {
   content: "";
-  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  mix-blend-mode: screen;
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
 }
