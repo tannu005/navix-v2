@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-// Import your components
+// Import your components (ensure these paths are correct for your project)
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
@@ -22,14 +22,16 @@ export default function Home() {
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
+  // 1. Hydration Guard
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // 2. Animation & Physics Loop
   useEffect(() => {
     if (!mounted) return;
 
-    // 1. Intro Animation
+    // Intro Wipe Animation
     const introTl = gsap.to(introRef.current, { 
       scaleY: 0, 
       duration: 1.5, 
@@ -38,9 +40,8 @@ export default function Home() {
       onComplete: () => setIntroGone(true)
     });
 
-    // 2. Animation Loop
     const tick = () => {
-      // String Physics
+      // String Physics Logic
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext("2d");
@@ -58,28 +59,31 @@ export default function Home() {
           py = p.y;
         });
 
-        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)";
+        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)"; // Groq Orange
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(points.current[0].x, points.current[0].y);
-        for (let i = 1; i < points.current.length; i++) ctx.lineTo(points.current[i].x, points.current[i].y);
+        for (let i = 1; i < points.current.length; i++) {
+          ctx.lineTo(points.current[i].x, points.current[i].y);
+        }
         ctx.stroke();
       }
 
-      // Headline Mask Reveal
+      // Headline Reveal Mask Logic
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
-        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMask = mask;
-        h1OverRef.current.style.mask = mask;
+        const maskStyle = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMask = maskStyle;
+        h1OverRef.current.style.mask = maskStyle;
       }
 
       requestAnimationFrame(tick);
     };
 
     const frameId = requestAnimationFrame(tick);
+    
     return () => {
       cancelAnimationFrame(frameId);
       introTl.kill();
@@ -89,7 +93,7 @@ export default function Home() {
   const handleMouseMove = (e) => {
     mouse.current = { x: e.clientX, y: e.clientY };
 
-    // Magnetic Button Effect
+    // Magnetic UI logic
     const btns = document.querySelectorAll(".magnetic-btn");
     btns.forEach(btn => {
       const rect = btn.getBoundingClientRect();
@@ -99,16 +103,16 @@ export default function Home() {
     });
   };
 
-  // CRITICAL: Prevent Hydration Error
+  // DO NOT REMOVE THIS. It prevents the Hydration Mismatch error.
   if (!mounted) return null;
 
   return (
-    <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505]">
+    <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-orange-500/30">
       
-      {/* String Cursor */}
+      {/* Follow String Physics */}
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
-      {/* Intro Overlay */}
+      {/* Intro Wipe Overlay */}
       {!introGone && (
         <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
           NAVIX AI
@@ -117,6 +121,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-4">
+        {/* Background Video */}
         <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
         </video>
@@ -127,6 +132,7 @@ export default function Home() {
             Agentic AI Intelligence
           </div>
 
+          {/* Masked Headline Reveal */}
           <div className="relative mb-8">
             <h1 ref={h1UnderRef} className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-under">
               Elevate Your Career
@@ -136,6 +142,10 @@ export default function Home() {
             </h1>
           </div>
 
+          <p className="max-w-md mx-auto text-zinc-500 font-dm text-lg mb-12 tracking-tight">
+            A high-performance workspace for optimized resumes and interview mastery.
+          </p>
+
           <Link href="/dashboard">
             <Button size="lg" className="magnetic-btn bg-white text-black hover:bg-white/90 font-bold px-12 h-16 rounded-full text-xs uppercase tracking-widest transition-none">
               Start Building <ArrowRight className="ml-2 w-4 h-4" />
@@ -144,6 +154,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Secondary Sections */}
       <div className="relative z-20 space-y-40 pb-40">
         <Features />
         <HowItWorks />
