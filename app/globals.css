@@ -46,3 +46,27 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   mix-blend-mode: screen;
 }
+html {
+  /* This enables smooth jumping to anchors (#features, etc.) */
+  scroll-behavior: smooth;
+}
+
+body {
+  /* Standardizes the scroll speed across browsers */
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar to match Obsidian aesthetic */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7593c; /* Your Groq Orange */
+  border-radius: 10px;
+}
