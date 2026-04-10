@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ReactLenis } from '@studio-freight/react-lenis';
 import gsap from "gsap";
 
+// Ensure these components exist in your directory
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
@@ -20,12 +21,12 @@ export default function Home() {
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
-  // 1. Next.js 15 Hydration Guard - CRITICAL
+  // 1. Force client-side mount only
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 2. Client-only Animation logic
+  // 2. Initialize browser-only logic (GSAP & Physics)
   useEffect(() => {
     if (!mounted) return;
 
@@ -39,7 +40,7 @@ export default function Home() {
     });
 
     const tick = () => {
-      // String Physics Logic
+      // String Physics logic
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext("2d");
@@ -57,7 +58,7 @@ export default function Home() {
           py = p.y;
         });
 
-        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)";
+        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)"; // Groq Orange
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(points.current[0].x, points.current[0].y);
@@ -67,41 +68,41 @@ export default function Home() {
         ctx.stroke();
       }
 
-      // Headline Mask logic
+      // Headline Mask Position
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
-        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMaskImage = mask;
-        h1OverRef.current.style.maskImage = mask;
+        const maskValue = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMaskImage = maskValue;
+        h1OverRef.current.style.maskImage = maskValue;
       }
 
       requestAnimationFrame(tick);
     };
 
     const frameId = requestAnimationFrame(tick);
+    
     return () => {
       cancelAnimationFrame(frameId);
       introTl.kill();
     };
   }, [mounted]);
 
-  const handleMouseMove = (e) => {
-    mouse.current = { x: e.clientX, y: e.clientY };
-  };
-
-  // IF NOT MOUNTED: Return null to prevent server/client HTML mismatch
+  // HYDRATION GUARD: Prevents deployment "window is not defined" error
   if (!mounted) return null;
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
-      <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505]">
+      <main 
+        onMouseMove={(e) => { mouse.current = { x: e.clientX, y: e.clientY } }} 
+        className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30"
+      >
         
-        {/* Physics Canvas */}
+        {/* String Physics Cursor */}
         <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
-        {/* Cinematic Entrance */}
+        {/* Intro Wipe */}
         {!introGone && (
           <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
             NAVIX AI
@@ -130,7 +131,7 @@ export default function Home() {
             </div>
 
             <Link href="/dashboard">
-              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest transition-none">
+              <Button size="lg" className="bg-white text-black hover:bg-white/90 font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest transition-none">
                 Initialize System <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
