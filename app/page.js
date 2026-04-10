@@ -24,12 +24,16 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    
-    // Canvas & Mask Logic
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
+    // Standardize canvas sizing
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -39,6 +43,7 @@ export default function Home() {
 
     const tick = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       let px = mouse.current.x;
       let py = mouse.current.y;
 
@@ -60,8 +65,14 @@ export default function Home() {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
+        
+        // Use CSS variables to sync with globals.css
         h1OverRef.current.style.setProperty('--x', `${x}px`);
         h1OverRef.current.style.setProperty('--y', `${y}px`);
+        
+        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMaskImage = mask;
+        h1OverRef.current.style.maskImage = mask;
       }
       requestAnimationFrame(tick);
     };
@@ -71,19 +82,16 @@ export default function Home() {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [mounted]);
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
       <main 
         onMouseMove={(e) => { mouse.current = { x: e.clientX, y: e.clientY } }} 
-        className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30"
+        className="relative min-h-screen bg-[#050505]"
       >
-        {/* Canvas rendered but invisible until mounted to maintain hydration structure */}
-        <canvas 
-          ref={canvasRef} 
-          className={`fixed inset-0 pointer-events-none z-[1001] transition-opacity duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`} 
-        />
+        {/* Canvas remains in the DOM but is only "active" after mount */}
+        <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
         <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
           <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
@@ -96,7 +104,7 @@ export default function Home() {
               Agentic AI Intelligence
             </div>
 
-            <div className="relative mb-8 group">
+            <div className="relative mb-8">
               <h1 className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-under">
                 Elevate Your Career
               </h1>
@@ -106,7 +114,7 @@ export default function Home() {
             </div>
 
             <Link href="/dashboard">
-              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:bg-[#c7593c] hover:text-white transition-all duration-300">
+              <Button size="lg" className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:bg-[#c7593c] hover:text-white transition-colors duration-300">
                 Initialize System <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
