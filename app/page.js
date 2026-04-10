@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-// Import project components (Ensure paths are correct)
+// Import your custom features components
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
@@ -20,16 +20,16 @@ export default function Home() {
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
-  // 1. Client-side initialization
+  // 1. Force client-side only mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 2. Browser-only Animation Engine
+  // 2. Initialize browser-only logic
   useEffect(() => {
     if (!mounted) return;
 
-    // Intro Entrance Animation
+    // Entrance Animation
     const introTl = gsap.to(introRef.current, { 
       scaleY: 0, 
       duration: 1.5, 
@@ -39,7 +39,7 @@ export default function Home() {
     });
 
     const tick = () => {
-      // String Cursor Physics
+      // String Physics logic
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext("2d");
@@ -67,22 +67,23 @@ export default function Home() {
         ctx.stroke();
       }
 
-      // Headline Mask Logic
+      // Headline Mask Position
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
-        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMaskImage = mask;
-        h1OverRef.current.style.maskImage = mask;
+        const maskValue = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMaskImage = maskValue;
+        h1OverRef.current.style.maskImage = maskValue;
       }
 
       requestAnimationFrame(tick);
     };
 
-    const animId = requestAnimationFrame(tick);
+    const frameId = requestAnimationFrame(tick);
+    
     return () => {
-      cancelAnimationFrame(animId);
+      cancelAnimationFrame(frameId);
       introTl.kill();
     };
   }, [mounted]);
@@ -90,23 +91,23 @@ export default function Home() {
   const handleMouseMove = (e) => {
     mouse.current = { x: e.clientX, y: e.clientY };
 
-    // Magnetic Interactions for buttons
+    // Simple Magnetic Effect for Buttons
     const btns = document.querySelectorAll(".magnetic-btn");
     btns.forEach(btn => {
       const rect = btn.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
-      const y = (e.clientY - rect.top - rect.height / 2) * 0.25;
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.2;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.2;
       gsap.to(btn, { x, y, duration: 0.4, ease: "power2.out" });
     });
   };
 
-  // BLOCK HYDRATION ERRORS: Returns a blank shell during SSR
+  // HYDRATION GUARD: Prevents deployment "window is not defined" error.
   if (!mounted) return <div className="min-h-screen bg-[#050505]" />;
 
   return (
-    <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30">
+    <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-orange-500/30">
       
-      {/* String Cursor */}
+      {/* String Physics Cursor */}
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
       {/* Intro Wipe */}
@@ -116,17 +117,17 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Content */}
+      {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        {/* Background Atmosphere */}
+        {/* Atmosphere Background */}
         <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
           <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
         </video>
 
-        <div className="relative z-10">
+        <div className="relative z-10 max-w-5xl">
           <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.4em] font-syne text-[#c7593c]">
             <Sparkles className="w-3 h-3" />
-            Agentic AI Protocol
+            Agentic AI Intelligence
           </div>
 
           <div className="relative mb-8">
@@ -139,17 +140,18 @@ export default function Home() {
           </div>
 
           <p className="max-w-md mx-auto text-zinc-500 font-dm text-lg mb-12 tracking-tight">
-            Advanced workspace for resume optimization and interview mastery.
+            High-performance workspace for optimized resumes and interview intelligence.
           </p>
 
           <Link href="/dashboard">
             <Button size="lg" className="magnetic-btn bg-white text-black hover:bg-white/90 font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest transition-none">
-              Initialize System <ArrowRight className="ml-2 w-4 h-4" />
+              Start Building <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
         </div>
       </section>
 
+      {/* Content Sections */}
       <div className="relative z-20 space-y-40 pb-40">
         <Features />
         <HowItWorks />
