@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ReactLenis } from '@studio-freight/react-lenis';
 import gsap from "gsap";
 
-// Ensure these sub-components exist in your directory
+// Ensure these components exist in your directory
 import Features from "@/components/features";
 import HowItWorks from "@/components/how-it-works";
 
@@ -21,34 +21,32 @@ export default function Home() {
   const mouse = useRef({ x: 0, y: 0 });
   const points = useRef(Array.from({ length: 20 }, () => ({ x: 0, y: 0 })));
 
-  // 1. Next.js 15 Hydration Guard
+  // 1. Force client-side mount only
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 2. Browser-only Logic
+  // 2. Initialize browser-only logic (GSAP & Physics)
   useEffect(() => {
     if (!mounted) return;
 
-    let ctx = gsap.context(() => {
-      // Entrance Animation
-      gsap.to(introRef.current, { 
-        scaleY: 0, 
-        duration: 1.5, 
-        ease: "expo.inOut", 
-        transformOrigin: "top",
-        onComplete: () => setIntroGone(true)
-      });
+    // Entrance Animation
+    const introTl = gsap.to(introRef.current, { 
+      scaleY: 0, 
+      duration: 1.5, 
+      ease: "expo.inOut", 
+      transformOrigin: "top",
+      onComplete: () => setIntroGone(true)
     });
 
     const tick = () => {
-      // String Cursor Canvas
+      // String Physics logic
       const canvas = canvasRef.current;
       if (canvas) {
-        const context = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         let px = mouse.current.x;
         let py = mouse.current.y;
@@ -60,40 +58,41 @@ export default function Home() {
           py = p.y;
         });
 
-        context.strokeStyle = "rgba(199, 89, 60, 0.4)";
-        context.lineWidth = 1.5;
-        context.beginPath();
-        context.moveTo(points.current[0].x, points.current[0].y);
+        ctx.strokeStyle = "rgba(199, 89, 60, 0.4)"; // Groq Orange
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(points.current[0].x, points.current[0].y);
         for (let i = 1; i < points.current.length; i++) {
-          context.lineTo(points.current[i].x, points.current[i].y);
+          ctx.lineTo(points.current[i].x, points.current[i].y);
         }
-        context.stroke();
+        ctx.stroke();
       }
 
-      // Headline Mask logic
+      // Headline Mask Position
       if (h1OverRef.current) {
         const rect = h1OverRef.current.getBoundingClientRect();
         const x = mouse.current.x - rect.left;
         const y = mouse.current.y - rect.top;
-        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMaskImage = mask;
-        h1OverRef.current.style.maskImage = mask;
+        const maskValue = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
+        h1OverRef.current.style.webkitMaskImage = maskValue;
+        h1OverRef.current.style.maskImage = maskValue;
       }
 
       requestAnimationFrame(tick);
     };
 
     const frameId = requestAnimationFrame(tick);
+    
     return () => {
       cancelAnimationFrame(frameId);
-      ctx.revert();
+      introTl.kill();
     };
   }, [mounted]);
 
   const handleMouseMove = (e) => {
     mouse.current = { x: e.clientX, y: e.clientY };
 
-    // Magnetic UI logic
+    // Magnetic Button logic
     const btns = document.querySelectorAll(".magnetic-btn");
     btns.forEach(btn => {
       const rect = btn.getBoundingClientRect();
@@ -103,29 +102,33 @@ export default function Home() {
     });
   };
 
-  // Critical: Prevents hydration mismatch by rendering nothing on server
-  if (!mounted) return null;
+  // HYDRATION GUARD: Prevents deployment "window is not defined" error
+  if (!mounted) return <div className="min-h-screen bg-[#050505]" />;
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
       <main onMouseMove={handleMouseMove} className="relative min-h-screen bg-[#050505] selection:bg-[#c7593c]/30">
+        
+        {/* String Physics Cursor */}
         <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[1001]" />
 
+        {/* Intro Wipe */}
         {!introGone && (
           <div ref={introRef} className="intro-overlay fixed inset-0 z-[2000] bg-black">
             NAVIX AI
           </div>
         )}
 
+        {/* Hero Section */}
         <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
           <video loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0">
             <source src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4" type="video/mp4" />
           </video>
 
-          <div className="relative z-10 max-w-5xl">
+          <div className="relative z-10">
             <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.4em] font-syne text-[#c7593c]">
               <Sparkles className="w-3 h-3" />
-              Agentic AI Intelligence
+              Agentic Protocol Active
             </div>
 
             <div className="relative mb-8">
@@ -138,7 +141,7 @@ export default function Home() {
             </div>
 
             <p className="max-w-md mx-auto text-zinc-500 font-dm text-lg mb-12 tracking-tight">
-              High-performance workspace for optimized resumes and interview mastery.
+              A high-performance workspace for optimized resumes and Groq-powered interview mastery.
             </p>
 
             <Link href="/dashboard">
