@@ -6,16 +6,20 @@
 
 @layer base {
   body {
-    @apply bg-[#050505] text-white antialiased selection:bg-white/20;
+    /* bg-[#050505] is your project's core dark theme */
+    @apply bg-[#050505] text-white antialiased selection:bg-[#c7593c]/30;
     font-family: 'DM Sans', sans-serif;
     cursor: none;
     overflow-x: hidden;
   }
 
-  /* Fixed background noise integrated into base for better rendering */
-  body::after {
+  /* REPLACEMENT FEATURE: 
+     Instead of a floating body::after, we define the grain as a fixed background 
+     layer that initializes with the base body to prevent flickering.
+  */
+  body::before {
     content: "";
-    @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
+    @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.04];
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     mix-blend-mode: screen;
   }
@@ -23,18 +27,30 @@
 
 @layer utilities {
   .headline-under {
-    @apply relative z-[1];
+    @apply relative z-0;
+    /* Uses the low-opacity white style seen in Navix-v2 */
     color: rgba(255, 255, 255, 0.05);
     mix-blend-mode: exclusion;
   }
 
   .headline-over {
-    @apply absolute top-0 left-0 w-full z-[10] pointer-events-none;
+    @apply absolute top-0 left-0 w-full z-10 pointer-events-none;
     color: white;
-    filter: drop-shadow(0 0 15px rgba(199, 89, 60, 0.3));
+    filter: drop-shadow(0 0 20px rgba(199, 89, 60, 0.4));
     
-    /* Cross-browser masking support */
-    -webkit-mask-image: radial-gradient(circle 250px at var(--mouse-x, 50%) var(--mouse-y, 50%), black, transparent);
-    mask-image: radial-gradient(circle 250px at var(--mouse-x, 50%) var(--mouse-y, 50%), black, transparent);
+    /* REPLACEMENT FEATURE: 
+       Uses CSS variables (--x, --y) that default to center. 
+       This prevents the "mask jump" during hydration.
+    */
+    -webkit-mask-image: radial-gradient(
+      circle 250px at var(--x, 50%) var(--y, 50%), 
+      black, 
+      transparent
+    );
+    mask-image: radial-gradient(
+      circle 250px at var(--x, 50%) var(--y, 50%), 
+      black, 
+      transparent
+    );
   }
 }
