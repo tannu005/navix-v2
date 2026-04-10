@@ -1,3 +1,4 @@
+/* 1. MUST BE LINE 1 - NO COMMENTS OR WHITESPACE ABOVE */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400&display=swap');
 
 @tailwind base;
@@ -8,12 +9,13 @@
   body {
     @apply bg-[#050505] text-white antialiased;
     font-family: 'DM Sans', sans-serif;
-    cursor: none; /* Hide default cursor */
+    cursor: none; /* Hide default cursor for the obsidian string */
     overflow-x: hidden;
   }
 }
 
 @layer utilities {
+  /* Intro Overlay for the cinematic entrance */
   .intro-overlay {
     @apply fixed inset-0 z-[2000] flex items-center justify-center bg-black text-[#c7593c] font-bebas text-7xl;
     transform-origin: top;
@@ -21,25 +23,24 @@
 
   /* Obsidian Masked Headline Reveal */
   .headline-under {
-    color: rgba(255, 255, 255, 0.05);
+    @apply text-white/5;
     mix-blend-mode: exclusion;
     position: relative;
     z-index: 1;
   }
 
   .headline-over {
-    color: white;
-    position: absolute;
-    top: 0; left: 0; width: 100%;
+    @apply absolute top-0 left-0 w-full text-white;
     z-index: 10;
     pointer-events: none;
     filter: drop-shadow(0 0 15px rgba(199, 89, 60, 0.3));
+    /* Cross-browser masking */
     -webkit-mask-image: radial-gradient(circle 250px at 50% 50%, black, transparent);
     mask-image: radial-gradient(circle 250px at 50% 50%, black, transparent);
   }
 }
 
-/* Cinematic Grain */
+/* Cinematic Film Grain Overlay */
 body::after {
   content: "";
   @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
