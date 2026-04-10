@@ -53,4 +53,12 @@
       transparent
     );
   }
+
+  .custom-cursor {
+    width: 28px;
+    height: 28px;
+    border: 2px solid rgba(199, 89, 60, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+  }
 }

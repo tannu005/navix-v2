@@ -40,6 +40,7 @@ export default function Home() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     // FIX: reset points on every mount so stale positions don't carry over
     points.current = Array.from({ length: 20 }, () => ({
