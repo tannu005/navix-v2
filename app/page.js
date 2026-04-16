@@ -84,7 +84,7 @@ const stats = [
 ];
 
 /* ─── Data ───────────────────────────────────────────── */
-const features: Feature[] = [
+const features = [
   {
     protocol: "PROTOCOL 01",
     title: "Resume Intelligence",
@@ -115,7 +115,7 @@ const features: Feature[] = [
   },
 ];
 
-const steps: Step[] = [
+const steps = [
   {
     num: "01",
     title: "Create Your Profile",
@@ -142,7 +142,7 @@ const steps: Step[] = [
   },
 ];
 
-const testimonials: Testimonial[] = [
+const testimonials = [
   {
     quote:
       "Navix helped me identify exactly what was missing from my resume. Three weeks after optimizing, I landed interviews at two FAANG companies.",
@@ -166,14 +166,14 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-const stats: Stat[] = [
+const stats= [
   { value: "10k+", label: "Resumes Analyzed" },
   { value: "5k+", label: "Interviews Prepped" },
   { value: "85%", label: "Interview Rate Improvement" },
   { value: "4.9★", label: "Average User Rating" },
 ];
 
-const faqs: FaqItem[] = [
+const faqs = [
   {
     q: "What makes Navix different from other career tools?",
     a: "Navix combines Groq-powered AI with a unified platform — resume optimization, interview prep, and application tracking all in one place. Most tools only do one of these well.",
@@ -198,8 +198,8 @@ const faqs: FaqItem[] = [
 
 /* ─── Sub-components ─────────────────────────────────── */
 
-function FaqAccordion({ items }: { items: FaqItem[] }) {
-  const [open, setOpen] = useState<number | null>(null);
+function FaqAccordion({ items }) {
+  const [open, setOpen] = useState(null);
 
   return (
     <div className="space-y-3">
