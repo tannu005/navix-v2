@@ -5,7 +5,7 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Navix — AI Career Coach | Resume Builder & Interview Prep",
   description:
     "Navix — AI-powered career coaching platform for resume building, ATS optimization, interview prep, and job application tracking. Groq-powered insights.",
