@@ -17,7 +17,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-/* ─── Data ───────────────────────────────────────────── */
+/* ─── Data (Consolidated to fix Duplicate Declaration Error) ─── */
 
 const features = [
   {
