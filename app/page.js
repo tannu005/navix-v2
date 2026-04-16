@@ -17,73 +17,8 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-/* ─── Types ─────────────────────────────────────────── */
-const faqItems = [
-  { q: "What is Navix?", a: "Navix is an AI career coach." },
-  { q: "How does it help?", a: "It helps with resumes, interviews, and job tracking." },
-];
-
-const features = [
-  {
-    protocol: "https",
-    title: "Secure Connection",
-    description: "Ensures encrypted communication between client and server.",
-    icon: "🔒", // Replace with a React component if needed
-  },
-  {
-    protocol: "http",
-    title: "Standard Connection",
-    description: "Basic communication without encryption.",
-    icon: "🌐",
-  },
-];
-// Define steps as an array of objects
-const steps = [
-  {
-    num: "1",
-    title: "Sign Up",
-    description: "Create your account to get started.",
-  },
-  {
-    num: "2",
-    title: "Build Resume",
-    description: "Use AI tools to craft your resume.",
-  },
-  {
-    num: "3",
-    title: "Prepare Interview",
-    description: "Practice with AI-powered interview simulations.",
-  },
-];
-// Testimonials data
-const testimonials = [
-  {
-    quote: "Navix helped me land my dream job!",
-    name: "Jane Doe",
-    role: "Software Engineer",
-    result: "Secured a role at a top tech company",
-  },
-  {
-    quote: "The AI resume builder was a game changer.",
-    name: "John Smith",
-    role: "Product Manager",
-    result: "Got more interview calls than ever before",
-  },
-];
-
-// Stats data
-const stats = [
-  {
-    value: "10K+",
-    label: "Resumes optimized",
-  },
-  {
-    value: "5K+",
-    label: "Successful interviews",
-  },
-];
-
 /* ─── Data ───────────────────────────────────────────── */
+
 const features = [
   {
     protocol: "PROTOCOL 01",
@@ -166,7 +101,7 @@ const testimonials = [
   },
 ];
 
-const stats= [
+const stats = [
   { value: "10k+", label: "Resumes Analyzed" },
   { value: "5k+", label: "Interviews Prepped" },
   { value: "85%", label: "Interview Rate Improvement" },
@@ -176,23 +111,23 @@ const stats= [
 const faqs = [
   {
     q: "What makes Navix different from other career tools?",
-    a: "Navix combines Groq-powered AI with a unified platform — resume optimization, interview prep, and application tracking all in one place. Most tools only do one of these well.",
+    a: "Navix combines Groq-powered AI with a unified platform — resume optimization, interview prep, and application tracking all in one place.",
   },
   {
     q: "Is my data secure?",
-    a: "Yes. Your resume and interview data are encrypted in transit and at rest. We never sell your data to third parties. See our Privacy Policy for full details.",
+    a: "Yes. Your resume and interview data are encrypted in transit and at rest. We never sell your data to third parties.",
   },
   {
     q: "How does the ATS optimization work?",
-    a: "Our AI parses your resume and compares it against thousands of job descriptions and known ATS parsing rules, then suggests specific changes to improve your match score.",
+    a: "Our AI parses your resume and compares it against thousands of job descriptions and known ATS parsing rules.",
   },
   {
     q: "Can I use Navix if I'm switching careers?",
-    a: "Absolutely. Navix is built for career changers. Just describe your target industry and roles — the AI will help you identify transferable skills and bridge any gaps.",
+    a: "Absolutely. Navix is built for career changers. The AI will help you identify transferable skills and bridge any gaps.",
   },
   {
     q: "Is there a free tier?",
-    a: "Yes. You can analyze one resume and run three mock interviews for free. Premium plans unlock unlimited access and advanced analytics.",
+    a: "Yes. You can analyze one resume and run three mock interviews for free.",
   },
 ];
 
@@ -241,9 +176,7 @@ export default function HomePage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    // Brief fade-in on mount
-    const t = setTimeout(() => setLoaded(true), 50);
-    return () => clearTimeout(t);
+    setLoaded(true);
   }, []);
 
   return (
@@ -256,7 +189,6 @@ export default function HomePage() {
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden hero-gradient hero-grid">
-        {/* Subtle radial glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -265,7 +197,6 @@ export default function HomePage() {
           }}
         />
 
-        {/* Groq badge */}
         <div className="relative z-10 mb-6">
           <span className="inline-flex items-center gap-2 text-xs tracking-widest text-sky-400 border border-sky-400/30 bg-sky-400/5 px-4 py-2 rounded-full">
             <Zap size={12} />
@@ -273,13 +204,11 @@ export default function HomePage() {
           </span>
         </div>
 
-        {/* ── DO NOT CHANGE: ELEVATE YOUR CAREER heading ── */}
         <h1 className="relative z-10 text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-none mb-6">
           ELEVATE
           <br />
           YOUR CAREER
         </h1>
-        {/* ─────────────────────────────────────────────── */}
 
         <p className="relative z-10 text-gray-400 text-base sm:text-lg max-w-xl mb-10 leading-relaxed">
           AI-powered resume optimization, interview preparation, and application
@@ -290,7 +219,7 @@ export default function HomePage() {
           {isSignedIn ? (
             <Link
               href="/dashboard"
-              className="group inline-flex items-center gap-2 bg-white text-black text-sm font-semibold px-8 py-3 rounded hover:bg-sky-400 hover:scale-105 hover:brightness-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="group inline-flex items-center gap-2 bg-white text-black text-sm font-semibold px-8 py-3 rounded hover:bg-sky-400 hover:scale-105 hover:brightness-110 transition-all duration-200"
             >
               LAUNCH NAVIX
               <ArrowRight
@@ -300,7 +229,7 @@ export default function HomePage() {
             </Link>
           ) : (
             <SignInButton mode="modal">
-              <button className="group inline-flex items-center gap-2 bg-white text-black text-sm font-semibold px-8 py-3 rounded hover:bg-sky-400 hover:scale-105 hover:brightness-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+              <button className="group inline-flex items-center gap-2 bg-white text-black text-sm font-semibold px-8 py-3 rounded hover:bg-sky-400 hover:scale-105 hover:brightness-110 transition-all duration-200">
                 LAUNCH NAVIX
                 <ArrowRight
                   size={14}
@@ -367,7 +296,7 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-6">
-            {steps.map((step, i) => (
+            {steps.map((step) => (
               <div
                 key={step.num}
                 className="flex gap-6 items-start p-6 rounded-xl border border-white/10 bg-[#0d0d0d] hover:border-white/20 transition-colors"
@@ -398,8 +327,7 @@ export default function HomePage() {
                 <p
                   className="text-3xl sm:text-4xl font-black mb-1"
                   style={{
-                    background:
-                      "linear-gradient(135deg, #38bdf8, #818cf8)",
+                    background: "linear-gradient(135deg, #38bdf8, #818cf8)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                   }}
@@ -422,7 +350,7 @@ export default function HomePage() {
           <div className="mb-14 text-center">
             <p className="text-xs tracking-widest text-sky-400 mb-3">VOICES</p>
             <h2 className="text-3xl sm:text-4xl font-bold">
-              Common queries.{" "}
+              Success stories.{" "}
               <span className="text-gray-400">Real results.</span>
             </h2>
           </div>
@@ -457,9 +385,6 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-gray-700 mt-8">
-            Testimonials are illustrative examples. Results may vary.
-          </p>
         </div>
       </section>
 
@@ -490,7 +415,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/dashboard"
-            className="group inline-flex items-center gap-2 bg-sky-400 text-black text-sm font-bold px-10 py-4 rounded hover:bg-sky-300 hover:scale-105 hover:brightness-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="group inline-flex items-center gap-2 bg-sky-400 text-black text-sm font-bold px-10 py-4 rounded hover:bg-sky-300 hover:scale-105 transition-all duration-200"
           >
             GET STARTED
             <ArrowRight
