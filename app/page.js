@@ -1,189 +1,472 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import dynamic from "next/dynamic";
+import { SignInButton, useAuth } from "@clerk/nextjs";
+import {
+  ChevronDown,
+  FileText,
+  Target,
+  MessageSquare,
+  BarChart3,
+  CheckCircle,
+  Star,
+  ArrowRight,
+  Zap,
+} from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-import Features from "@/components/features";
-import HowItWorks from "@/components/how-it-works";
+/* ─── Types ─────────────────────────────────────────── */
+interface FaqItem {
+  q: string;
+  a: string;
+}
 
-// FIX: package moved from @studio-freight/react-lenis → lenis/react
-const ReactLenis = dynamic(
-  () => import("lenis/react").then((mod) => mod.ReactLenis),
+interface Feature {
+  protocol: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+interface Step {
+  num: string;
+  title: string;
+  description: string;
+}
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  result: string;
+}
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+/* ─── Data ───────────────────────────────────────────── */
+const features: Feature[] = [
   {
-    ssr: false,
-    // FIX: fallback prevents layout shift while Lenis JS loads
-    loading: () => <div className="min-h-screen bg-[#050505]" />,
-  }
-);
+    protocol: "PROTOCOL 01",
+    title: "Resume Intelligence",
+    description:
+      "AI-powered resume analysis with ATS optimization, keyword matching, and tailored recommendations for your target roles.",
+    icon: <FileText size={20} className="text-sky-400" />,
+  },
+  {
+    protocol: "PROTOCOL 02",
+    title: "Application Targeting",
+    description:
+      "Intelligent job matching that aligns your skills and experience with the right opportunities across industries.",
+    icon: <Target size={20} className="text-sky-400" />,
+  },
+  {
+    protocol: "PROTOCOL 03",
+    title: "Interview Preparation",
+    description:
+      "Simulated interviews powered by Groq AI with real-time feedback, scoring, and personalized coaching tips.",
+    icon: <MessageSquare size={20} className="text-sky-400" />,
+  },
+  {
+    protocol: "PROTOCOL 04",
+    title: "Progress Analytics",
+    description:
+      "Track your applications, monitor success rates, and gain insights into your job search performance over time.",
+    icon: <BarChart3 size={20} className="text-sky-400" />,
+  },
+];
 
-export default function Home() {
-  const [mounted, setMounted] = useState(false);
+const steps: Step[] = [
+  {
+    num: "01",
+    title: "Create Your Profile",
+    description:
+      "Sign up and tell us about your industry, target roles, and career goals. The system calibrates to your unique trajectory.",
+  },
+  {
+    num: "02",
+    title: "Upload Your Resume",
+    description:
+      "Our AI analyzes your resume against ATS systems and real job descriptions, surfacing gaps and opportunities instantly.",
+  },
+  {
+    num: "03",
+    title: "Practice & Prepare",
+    description:
+      "Run AI-powered mock interviews tailored to your target roles. Get scored, get feedback, and iterate until you're ready.",
+  },
+  {
+    num: "04",
+    title: "Track & Optimize",
+    description:
+      "Monitor every application, identify patterns, and refine your strategy with data-driven insights from your dashboard.",
+  },
+];
 
-  const h1OverRef   = useRef(null);
-  const canvasRef   = useRef(null);
-  const cursorRef   = useRef(null); // FIX: custom cursor element
-  const rafIdRef    = useRef(null); // FIX: track RAF id across frames
-  // FIX: start off-screen so trail/mask don't render at (0,0) on load
-  const mouse       = useRef({ x: -9999, y: -9999 });
-  const points      = useRef([]);
+const testimonials: Testimonial[] = [
+  {
+    quote:
+      "Navix helped me identify exactly what was missing from my resume. Three weeks after optimizing, I landed interviews at two FAANG companies.",
+    name: "Priya M.",
+    role: "Software Engineer",
+    result: "Landed FAANG interview",
+  },
+  {
+    quote:
+      "The mock interview feature is genuinely impressive. It asked me questions I didn't expect and gave me honest, actionable feedback.",
+    name: "Arjun K.",
+    role: "Product Manager",
+    result: "Promoted internally",
+  },
+  {
+    quote:
+      "I was applying to dozens of jobs with no response. After Navix's ATS optimization, my response rate jumped significantly.",
+    name: "Sara L.",
+    role: "UX Designer",
+    result: "3x more callbacks",
+  },
+];
+
+const stats: Stat[] = [
+  { value: "10k+", label: "Resumes Analyzed" },
+  { value: "5k+", label: "Interviews Prepped" },
+  { value: "85%", label: "Interview Rate Improvement" },
+  { value: "4.9★", label: "Average User Rating" },
+];
+
+const faqs: FaqItem[] = [
+  {
+    q: "What makes Navix different from other career tools?",
+    a: "Navix combines Groq-powered AI with a unified platform — resume optimization, interview prep, and application tracking all in one place. Most tools only do one of these well.",
+  },
+  {
+    q: "Is my data secure?",
+    a: "Yes. Your resume and interview data are encrypted in transit and at rest. We never sell your data to third parties. See our Privacy Policy for full details.",
+  },
+  {
+    q: "How does the ATS optimization work?",
+    a: "Our AI parses your resume and compares it against thousands of job descriptions and known ATS parsing rules, then suggests specific changes to improve your match score.",
+  },
+  {
+    q: "Can I use Navix if I'm switching careers?",
+    a: "Absolutely. Navix is built for career changers. Just describe your target industry and roles — the AI will help you identify transferable skills and bridge any gaps.",
+  },
+  {
+    q: "Is there a free tier?",
+    a: "Yes. You can analyze one resume and run three mock interviews for free. Premium plans unlock unlimited access and advanced analytics.",
+  },
+];
+
+/* ─── Sub-components ─────────────────────────────────── */
+
+function FaqAccordion({ items }: { items: FaqItem[] }) {
+  const [open, setOpen] = useState<number | null>(null);
+
+  return (
+    <div className="space-y-3">
+      {items.map((item, i) => (
+        <div
+          key={i}
+          className="border border-white/10 rounded-lg overflow-hidden bg-[#0d0d0d] hover:border-white/20 transition-colors"
+        >
+          <button
+            className="w-full flex items-center justify-between px-6 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-inset"
+            onClick={() => setOpen(open === i ? null : i)}
+            aria-expanded={open === i}
+          >
+            <span className="text-sm font-medium text-gray-100 pr-4">
+              {item.q}
+            </span>
+            <ChevronDown
+              size={16}
+              className={`text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+                open === i ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+          {open === i && (
+            <div className="px-6 pb-4">
+              <p className="text-sm text-gray-300 leading-relaxed">{item.a}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Page ───────────────────────────────────────────── */
+
+export default function HomePage() {
+  const { isSignedIn } = useAuth();
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    // FIX: reset points on every mount so stale positions don't carry over
-    points.current = Array.from({ length: 20 }, () => ({
-      x: mouse.current.x,
-      y: mouse.current.y,
-    }));
-
-    const handleResize = () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    const tick = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      let px = mouse.current.x;
-      let py = mouse.current.y;
-
-      points.current.forEach((p) => {
-        p.x += (px - p.x) * 0.35;
-        p.y += (py - p.y) * 0.35;
-        px = p.x;
-        py = p.y;
-      });
-
-      ctx.strokeStyle = "rgba(199, 89, 60, 0.4)";
-      ctx.lineWidth   = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(points.current[0].x, points.current[0].y);
-      for (let i = 1; i < points.current.length; i++) {
-        ctx.lineTo(points.current[i].x, points.current[i].y);
-      }
-      ctx.stroke();
-
-      if (h1OverRef.current) {
-        const rect = h1OverRef.current.getBoundingClientRect();
-        const x    = mouse.current.x - rect.left;
-        const y    = mouse.current.y - rect.top;
-        const mask = `radial-gradient(circle 250px at ${x}px ${y}px, black, transparent)`;
-        h1OverRef.current.style.webkitMaskImage = mask;
-        h1OverRef.current.style.maskImage       = mask;
-      }
-
-      // FIX: store new RAF id every frame so cleanup always cancels the latest
-      rafIdRef.current = requestAnimationFrame(tick);
-    };
-
-    rafIdRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(rafIdRef.current); // FIX: correct cancel
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [mounted]);
-
-  // FIX: stable reference with useCallback, no new fn every render
-  const handleMouseMove = useCallback((e) => {
-    mouse.current = { x: e.clientX, y: e.clientY };
-
-    // Update custom cursor position via direct DOM (no re-render)
-    if (cursorRef.current) {
-      cursorRef.current.style.transform =
-        `translate(${e.clientX - 14}px, ${e.clientY - 14}px)`;
-    }
-  }, []);
-
-  // Reset cursor + trail when mouse leaves viewport
-  const handleMouseLeave = useCallback(() => {
-    mouse.current = { x: -9999, y: -9999 };
+    // Brief fade-in on mount
+    const t = setTimeout(() => setLoaded(true), 50);
+    return () => clearTimeout(t);
   }, []);
 
   return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
-      <main
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className="relative min-h-screen bg-[#050505]"
-      >
-        {/* FIX: custom cursor ring — pairs with cursor:none in globals.css */}
+    <div
+      className={`min-h-screen bg-black text-white transition-opacity duration-500 ${
+        loaded ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <Navbar />
+
+      {/* ── HERO ──────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden hero-gradient hero-grid">
+        {/* Subtle radial glow */}
         <div
-          ref={cursorRef}
-          className="custom-cursor fixed top-0 left-0 pointer-events-none z-[10000]"
-          style={{ willChange: "transform" }} // GPU-composited, no layout thrash
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(56,189,248,0.04) 0%, transparent 70%)",
+          }}
         />
 
-        {/* Trail canvas — z-[100] keeps it above content, below modals/header */}
-        <canvas
-          ref={canvasRef}
-          className={`fixed inset-0 pointer-events-none z-[100] transition-opacity duration-700 ${
-            mounted ? "opacity-100" : "opacity-0"
-          }`}
-        />
-
-        {/* Hero */}
-        <section className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-          <video
-            loop
-            autoPlay
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale z-0"
-          >
-            <source
-              src="https://video.twimg.com/amplify_video/1613142244415504384/vid/1280x720/mSj6C-X1oV1S5jHj.mp4"
-              type="video/mp4"
-            />
-          </video>
-
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] uppercase tracking-[0.4em] font-syne text-[#c7593c]">
-              <Sparkles className="w-3 h-3" />
-              Agentic AI Intelligence
-            </div>
-
-            <div className="relative mb-8">
-              <h1 className="text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-under">
-                Elevate Your Career
-              </h1>
-              <h1
-                ref={h1OverRef}
-                className="absolute inset-0 text-[11vw] font-bebas uppercase leading-none tracking-tighter headline-over"
-              >
-                Elevate Your Career
-              </h1>
-            </div>
-
-            <Link href="/dashboard">
-              <Button
-                size="lg"
-                className="bg-white text-black font-bold px-12 h-16 rounded-full text-[10px] uppercase tracking-widest hover:bg-[#c7593c] hover:text-white transition-all duration-300"
-              >
-                Initialize System <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
-        </section>
-
-        <div className="relative z-20 space-y-40 pb-40">
-          <Features />
-          <HowItWorks />
+        {/* Groq badge */}
+        <div className="relative z-10 mb-6">
+          <span className="inline-flex items-center gap-2 text-xs tracking-widest text-sky-400 border border-sky-400/30 bg-sky-400/5 px-4 py-2 rounded-full">
+            <Zap size={12} />
+            GROQ POWERED CAREER COACHING
+          </span>
         </div>
-      </main>
-    </ReactLenis>
+
+        {/* ── DO NOT CHANGE: ELEVATE YOUR CAREER heading ── */}
+        <h1 className="relative z-10 text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-none mb-6">
+          ELEVATE
+          <br />
+          YOUR CAREER
+        </h1>
+        {/* ─────────────────────────────────────────────── */}
+
+        <p className="relative z-10 text-gray-400 text-base sm:text-lg max-w-xl mb-10 leading-relaxed">
+          AI-powered resume optimization, interview preparation, and application
+          tracking — all in one place.
+        </p>
+
+        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4">
+          {isSignedIn ? (
+            <Link
+              href="/dashboard"
+              className="group inline-flex items-center gap-2 bg-white text-black text-sm font-semibold px-8 py-3 rounded hover:bg-sky-400 hover:scale-105 hover:brightness-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            >
+              LAUNCH NAVIX
+              <ArrowRight
+                size={14}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </Link>
+          ) : (
+            <SignInButton mode="modal">
+              <button className="group inline-flex items-center gap-2 bg-white text-black text-sm font-semibold px-8 py-3 rounded hover:bg-sky-400 hover:scale-105 hover:brightness-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+                LAUNCH NAVIX
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </button>
+            </SignInButton>
+          )}
+          <a
+            href="#features"
+            className="text-sm text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1.5"
+          >
+            Explore features <ChevronDown size={14} />
+          </a>
+        </div>
+      </section>
+
+      {/* ── FEATURES ──────────────────────────────────────── */}
+      <section id="features" className="py-24 px-4 bg-[#050505]">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-14 text-center">
+            <p className="text-xs tracking-widest text-sky-400 mb-3">
+              SYSTEM FEATURES
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white">
+              Four protocols.{" "}
+              <span className="text-gray-400">One mission.</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {features.map((f) => (
+              <div
+                key={f.protocol}
+                className="bg-[#111827] border border-white/10 rounded-xl p-6 hover:border-sky-400/30 transition-all duration-300 hover:bg-[#131d2e]"
+              >
+                <div className="mb-4">{f.icon}</div>
+                <p className="text-xs tracking-widest text-sky-400/80 mb-2">
+                  {f.protocol}
+                </p>
+                <h3 className="text-base font-semibold text-white mb-2">
+                  {f.title}
+                </h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  {f.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PROCESS ───────────────────────────────────────── */}
+      <section id="process" className="py-24 px-4 bg-black">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-14 text-center">
+            <p className="text-xs tracking-widest text-sky-400 mb-3">
+              HOW IT WORKS
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Four steps{" "}
+              <span className="text-gray-400">to your next role.</span>
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            {steps.map((step, i) => (
+              <div
+                key={step.num}
+                className="flex gap-6 items-start p-6 rounded-xl border border-white/10 bg-[#0d0d0d] hover:border-white/20 transition-colors"
+              >
+                <span className="text-2xl font-black text-sky-400/60 tabular-nums flex-shrink-0 pt-0.5">
+                  {step.num}
+                </span>
+                <div>
+                  <h3 className="text-base font-semibold text-white mb-1.5">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS ─────────────────────────────────────────── */}
+      <section className="py-20 px-4 bg-[#050505] border-y border-white/5">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {stats.map((s) => (
+              <div key={s.label} className="py-2">
+                <p
+                  className="text-3xl sm:text-4xl font-black mb-1"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #38bdf8, #818cf8)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  {s.value}
+                </p>
+                <p className="text-xs tracking-wide text-gray-500">{s.label}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-gray-700 mt-8">
+            Stats based on beta user data as of 2026. Results may vary.
+          </p>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ──────────────────────────────────── */}
+      <section id="testimonials" className="py-24 px-4 bg-black">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-14 text-center">
+            <p className="text-xs tracking-widest text-sky-400 mb-3">VOICES</p>
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Common queries.{" "}
+              <span className="text-gray-400">Real results.</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="bg-[#1a1a1a] border border-white/10 rounded-xl p-6 flex flex-col"
+              >
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={12}
+                      className="text-amber-400 fill-amber-400"
+                    />
+                  ))}
+                </div>
+                <blockquote className="text-sm text-gray-200 leading-relaxed mb-4 flex-1">
+                  &ldquo;{t.quote}&rdquo;
+                </blockquote>
+                <div className="border-t border-white/10 pt-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white">{t.name}</p>
+                    <p className="text-xs text-gray-500">{t.role}</p>
+                  </div>
+                  <span className="text-xs text-sky-400 border border-sky-400/30 bg-sky-400/5 px-2 py-1 rounded-full">
+                    {t.result}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-gray-700 mt-8">
+            Testimonials are illustrative examples. Results may vary.
+          </p>
+        </div>
+      </section>
+
+      {/* ── FAQ ───────────────────────────────────────────── */}
+      <section id="faq" className="py-24 px-4 bg-[#050505]">
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-12 text-center">
+            <p className="text-xs tracking-widest text-sky-400 mb-3">FAQ</p>
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Common queries.{" "}
+              <span className="text-gray-400">Straight answers.</span>
+            </h2>
+          </div>
+          <FaqAccordion items={faqs} />
+        </div>
+      </section>
+
+      {/* ── CTA ───────────────────────────────────────────── */}
+      <section className="py-24 px-4 bg-black text-center">
+        <div className="max-w-2xl mx-auto">
+          <CheckCircle size={32} className="text-sky-400 mx-auto mb-6" />
+          <h2 className="text-3xl sm:text-4xl font-black mb-4">
+            Start your ascent.
+          </h2>
+          <p className="text-gray-400 mb-10 text-sm sm:text-base leading-relaxed">
+            Join thousands of professionals using Navix to land the roles they
+            deserve.
+          </p>
+          <Link
+            href="/dashboard"
+            className="group inline-flex items-center gap-2 bg-sky-400 text-black text-sm font-bold px-10 py-4 rounded hover:bg-sky-300 hover:scale-105 hover:brightness-110 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          >
+            GET STARTED
+            <ArrowRight
+              size={14}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
   );
 }
