@@ -41,11 +41,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en" className="scroll-smooth">
@@ -56,3 +52,4 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
+
