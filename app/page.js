@@ -18,35 +18,70 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 /* ─── Types ─────────────────────────────────────────── */
-interface FaqItem {
-  q: string;
-  a: string;
-}
+const faqItems = [
+  { q: "What is Navix?", a: "Navix is an AI career coach." },
+  { q: "How does it help?", a: "It helps with resumes, interviews, and job tracking." },
+];
 
-interface Feature {
-  protocol: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
+const features = [
+  {
+    protocol: "https",
+    title: "Secure Connection",
+    description: "Ensures encrypted communication between client and server.",
+    icon: "🔒", // Replace with a React component if needed
+  },
+  {
+    protocol: "http",
+    title: "Standard Connection",
+    description: "Basic communication without encryption.",
+    icon: "🌐",
+  },
+];
+// Define steps as an array of objects
+const steps = [
+  {
+    num: "1",
+    title: "Sign Up",
+    description: "Create your account to get started.",
+  },
+  {
+    num: "2",
+    title: "Build Resume",
+    description: "Use AI tools to craft your resume.",
+  },
+  {
+    num: "3",
+    title: "Prepare Interview",
+    description: "Practice with AI-powered interview simulations.",
+  },
+];
+// Testimonials data
+const testimonials = [
+  {
+    quote: "Navix helped me land my dream job!",
+    name: "Jane Doe",
+    role: "Software Engineer",
+    result: "Secured a role at a top tech company",
+  },
+  {
+    quote: "The AI resume builder was a game changer.",
+    name: "John Smith",
+    role: "Product Manager",
+    result: "Got more interview calls than ever before",
+  },
+];
 
-interface Step {
-  num: string;
-  title: string;
-  description: string;
-}
-
-interface Testimonial {
-  quote: string;
-  name: string;
-  role: string;
-  result: string;
-}
-
-interface Stat {
-  value: string;
-  label: string;
-}
+// Stats data
+const stats = [
+  {
+    value: "10K+",
+    label: "Resumes optimized",
+  },
+  {
+    value: "5K+",
+    label: "Successful interviews",
+  },
+];
 
 /* ─── Data ───────────────────────────────────────────── */
 const features: Feature[] = [
