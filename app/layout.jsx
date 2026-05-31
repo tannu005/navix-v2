@@ -1,6 +1,6 @@
-import { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
+import CursorTrail from "@/components/CursorTrail";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -46,6 +46,7 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" className="scroll-smooth">
         <body className={`${inter.className} bg-black text-white antialiased`}>
+          <CursorTrail />
           {children}
         </body>
       </html>
