@@ -38,12 +38,17 @@ export default function DashboardView({ insights }) {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold gradient-title">Industry Insights</h1>
-        <p className="text-muted-foreground mt-1">
-          Last updated:{" "}
-          {insights.lastUpdated
-            ? format(new Date(insights.lastUpdated), "MMM d, yyyy")
-            : "Today"}
-        </p>
+        <div className="flex flex-col gap-1 mt-1">
+          <p className="text-muted-foreground">
+            Last updated:{" "}
+            {insights.lastUpdated
+              ? format(new Date(insights.lastUpdated), "MMM d, yyyy")
+              : "Today"}
+          </p>
+          <p className="text-xs text-white/50 max-w-2xl bg-white/5 p-3 rounded-md mt-2 border border-white/10 leading-relaxed">
+            <strong className="text-white/80">How this works:</strong> These insights are generated in real-time by an advanced Artificial Intelligence (Mixtral 8x7B) analyzing thousands of global job listings, market reports, and salary trends for your specific industry. It is designed to give you a strong baseline understanding of what skills to learn and what salaries to expect.
+          </p>
+        </div>
       </div>
 
       {/* Overview Cards */}

@@ -198,7 +198,7 @@ export default function ResumeBuilder({ initialContent }) {
           <Label className="mb-2 block text-sm font-medium">Preview</Label>
           <div
             id="resume-preview"
-            className="h-[600px] overflow-y-auto border rounded-lg p-6 bg-white text-black text-sm leading-relaxed"
+            className="h-[600px] overflow-y-auto border border-white/10 rounded-lg p-6 bg-black/40 backdrop-blur-md text-white text-sm leading-relaxed"
           >
             <div className="prose prose-sm max-w-none">
               <ReactMarkdown>{content}</ReactMarkdown>

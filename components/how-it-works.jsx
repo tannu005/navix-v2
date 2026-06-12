@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useEffect, useState } from "react";
+import ScrollytellingCanvas from "@/components/scrollytelling-canvas";
 
 const STEPS = [
   {
@@ -67,7 +68,7 @@ function StepItem({ step, index }) {
           className="absolute left-[39px] top-12 w-px"
           style={{
             height: "calc(100% - 12px)",
-            background: "linear-gradient(to bottom, rgba(0,200,255,0.12), transparent)",
+            background: "linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)",
           }}
         />
       )}
@@ -76,9 +77,9 @@ function StepItem({ step, index }) {
       <div
         className="relative flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-xs font-mono tracking-widest z-10"
         style={{
-          border: "1px solid rgba(0,200,255,0.15)",
-          background: "rgba(0,200,255,0.04)",
-          color: "rgba(0,200,255,0.5)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          background: "rgba(255,255,255,0.05)",
+          color: "rgba(255,255,255,0.6)",
           transition: "border-color 0.4s, color 0.4s",
         }}
       >
@@ -87,8 +88,8 @@ function StepItem({ step, index }) {
 
       <div className="pt-1.5">
         <h3
-          className="text-xl font-medium mb-3 text-white/80 group-hover:text-cyan-300 transition-colors duration-500"
-          style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.02em" }}
+          className="text-2xl font-medium mb-3 text-white/80 group-hover:text-white transition-colors duration-500"
+          style={{ fontFamily: "'Instrument Serif', serif" }}
         >
           {step.title}
         </h3>
@@ -105,8 +106,8 @@ export default function HowItWorks() {
   const headVisible = useInView(headRef);
 
   return (
-    <section className="py-32 px-6 border-t border-white/[0.04]">
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20">
+    <section className="relative z-10 border-t border-white/5 bg-transparent overflow-hidden">
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 relative z-20 px-6 pt-32 pb-48">
         {/* Heading */}
         <div
           ref={headRef}
@@ -117,20 +118,22 @@ export default function HowItWorks() {
           }}
           className="md:sticky md:top-32 md:self-start reveal"
         >
-          <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">Process</p>
+          <p className="text-xs tracking-[0.4em] text-white/30 uppercase mb-4">Process</p>
           <h2
-            className="text-5xl font-medium text-white/80"
-            style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.03em" }}
+            className="text-6xl text-white drop-shadow-lg"
+            style={{ fontFamily: "'Instrument Serif', serif" }}
           >
             Four steps<br />
-            <span className="text-white/30">to your next role.</span>
+            <span className="text-white/40">to your next role.</span>
           </h2>
         </div>
 
         {/* Steps */}
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col gap-16">
           {STEPS.map((step, i) => (
-            <StepItem key={step.index} step={step} index={i} />
+            <div key={step.index}>
+              <StepItem step={step} index={i} />
+            </div>
           ))}
         </div>
       </div>

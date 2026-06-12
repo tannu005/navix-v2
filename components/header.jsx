@@ -1,125 +1,144 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "./ui/button";
 import {
-  PenBox, LayoutDashboard, FileText, GraduationCap,
-  ChevronDown, Briefcase, Brain, Map, BarChart2, DollarSign, Zap
+  LayoutDashboard, FileText, GraduationCap, PenBox,
+  ChevronDown, Briefcase, Brain, Map, BarChart2, DollarSign
 } from "lucide-react";
-import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
-import { checkUser } from "@/lib/checkuser";
 
-export default async function Header() {
-  await checkUser();
+export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="fixed top-0 w-full z-50" style={{ borderBottom: "1px solid hsl(199 89% 60% / 0.1)" }}>
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "hsl(222, 20%, 6% / 0.85)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-        }}
-      />
-      <nav className="relative container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo text fallback — shows "NAVIX" with cyan accent if no logo.png */}
-        <Link href="/" className="flex items-center gap-2">
-          <div
-            className="flex items-center gap-1.5 font-bold text-xl tracking-tight"
-            style={{ fontFamily: "'Syne', sans-serif" }}
-          >
-            <Zap className="h-5 w-5" style={{ color: "hsl(199, 89%, 60%)" }} />
-            <span className="text-foreground">Navi</span>
-            <span style={{ color: "hsl(199, 89%, 60%)" }}>x</span>
+    <header
+      className={`fixed top-0 w-full z-[100] transition-all duration-500 border-b ${
+        scrolled 
+          ? "bg-black/30 backdrop-blur-xl border-white/10 shadow-lg py-4" 
+          : "bg-transparent border-transparent py-6"
+      }`}
+    >
+      <nav className="container mx-auto px-6 md:px-10 h-full flex items-center justify-between">
+        
+        {/* Sleek Logo Area */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-white/10 group-hover:border-cyan-500/50 shadow-[0_0_15px_rgba(56,189,248,0.15)] group-hover:shadow-[0_0_25px_rgba(56,189,248,0.4)] transition-all duration-500 flex-shrink-0">
+            <Image 
+              src="/logo.png" 
+              alt="Navix Logo" 
+              fill
+              className="object-cover scale-110 group-hover:scale-100 transition-transform duration-700" 
+            />
           </div>
-
-          {/* Badge with reveal */}
-          <span className="text-xs uppercase tracking-widest text-white/40 border border-white/10 px-2 py-0.5 rounded reveal">
-            Beta
-          </span>
+          <div className="flex items-baseline">
+            <span 
+              className="text-2xl tracking-tighter font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/70 group-hover:from-cyan-400 group-hover:via-blue-500 group-hover:to-purple-500 transition-all duration-500"
+            >
+              NAVIX
+            </span>
+            <span className="text-cyan-400 font-bold text-3xl leading-none ml-[1px] animate-pulse">.</span>
+          </div>
         </Link>
 
-        <div className="flex items-center space-x-2 md:space-x-3">
+        {/* Navigation Items */}
+        <div className="flex items-center space-x-2 md:space-x-4">
           <SignedIn>
-            <Link href="/dashboard">
+            <div className="flex gap-1 md:gap-2">
               <Button
                 variant="ghost"
-                className="hidden md:inline-flex items-center gap-2 text-sm"
-                style={{ color: "hsl(215, 15%, 65%)" }}
+                asChild
+                className="hidden md:inline-flex items-center gap-2 text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-full px-4 transition-colors"
               >
-                <LayoutDashboard className="h-4 w-4" /> Dashboard
+                <Link href="/dashboard">
+                  <LayoutDashboard className="h-4 w-4" /> Dashboard
+                </Link>
               </Button>
-              <Button variant="ghost" className="md:hidden w-10 h-10 p-0">
-                <LayoutDashboard className="h-4 w-4" />
+              <Button asChild variant="ghost" className="md:hidden w-10 h-10 p-0 rounded-full text-white/60 hover:text-white hover:bg-white/5">
+                <Link href="/dashboard">
+                  <LayoutDashboard className="h-4 w-4" />
+                </Link>
               </Button>
-            </Link>
+            </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="flex items-center gap-2 text-sm font-medium btn-glow"
-                  style={{ background: "hsl(199, 89%, 48%)", color: "#fff", border: "none" }}
+                  variant="ghost"
+                  className="flex items-center gap-2 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-full px-4 transition-colors"
                 >
-                  <Brain className="h-4 w-4" />
-                  <span className="hidden md:block">AI Tools</span>
-                  <ChevronDown className="h-3.5 w-3.5" />
+                  Tools
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-60"
-                style={{ background: "hsl(222, 18%, 9%)", border: "1px solid hsl(199 89% 60% / 0.15)" }}
+                className="w-56 mt-2 p-1.5 rounded-2xl shadow-2xl border border-white/10 bg-black/80 backdrop-blur-2xl"
               >
-                <DropdownMenuLabel className="text-xs uppercase tracking-widest" style={{ color: "hsl(199, 89%, 60%)" }}>
-                  Agentic AI
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-widest px-2 py-1.5 text-white/40 font-medium">
+                  Intelligence
                 </DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                  <Link href="/ai-agent" className="flex items-center gap-2">
-                    <Brain className="h-4 w-4" style={{ color: "hsl(199, 89%, 60%)" }} /> AI Career Agent
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/ai-agent" className="flex items-center gap-3 text-white/80">
+                    <Brain className="h-4 w-4 text-white/50" /> Career Agent
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/career-roadmap" className="flex items-center gap-2">
-                    <Map className="h-4 w-4" style={{ color: "hsl(199, 89%, 60%)" }} /> Career Roadmap
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/career-roadmap" className="flex items-center gap-3 text-white/80">
+                    <Map className="h-4 w-4 text-white/50" /> Roadmap
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/skill-gap" className="flex items-center gap-2">
-                    <BarChart2 className="h-4 w-4" style={{ color: "hsl(199, 89%, 60%)" }} /> Skill Gap Analyser
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/skill-gap" className="flex items-center gap-3 text-white/80">
+                    <BarChart2 className="h-4 w-4 text-white/50" /> Skill Gap
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/salary" className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" style={{ color: "hsl(199, 89%, 60%)" }} /> Salary Intelligence
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/salary" className="flex items-center gap-3 text-white/80">
+                    <DollarSign className="h-4 w-4 text-white/50" /> Salary Intel
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator style={{ background: "hsl(199 89% 60% / 0.1)" }} />
-                <DropdownMenuLabel className="text-xs uppercase tracking-widest" style={{ color: "hsl(215, 15%, 50%)" }}>
-                  Career Tools
+                
+                <DropdownMenuSeparator className="my-1.5 bg-white/5" />
+                
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-widest px-2 py-1.5 text-white/40 font-medium">
+                  Preparation
                 </DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                  <Link href="/resume" className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" /> Build Resume
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/resume" className="flex items-center gap-3 text-white/70">
+                    <FileText className="h-4 w-4 text-white/40" /> Build Resume
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/ai-cover-letter" className="flex items-center gap-2">
-                    <PenBox className="h-4 w-4" /> Cover Letter
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/ai-cover-letter" className="flex items-center gap-3 text-white/70">
+                    <PenBox className="h-4 w-4 text-white/40" /> Cover Letter
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/interview" className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4" /> Interview Prep
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/interview" className="flex items-center gap-3 text-white/70">
+                    <GraduationCap className="h-4 w-4 text-white/40" /> Interviews
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator style={{ background: "hsl(199 89% 60% / 0.1)" }} />
-                <DropdownMenuItem asChild>
-                  <Link href="/job-tracker" className="flex items-center gap-2">
-                    <Briefcase className="h-4 w-4" /> Job Tracker
+                
+                <DropdownMenuSeparator className="my-1.5 bg-white/5" />
+                
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 cursor-pointer hover:bg-white/10 focus:bg-white/10 transition-colors">
+                  <Link href="/job-tracker" className="flex items-center gap-3 text-white/70">
+                    <Briefcase className="h-4 w-4 text-white/40" /> Applications
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -127,11 +146,10 @@ export default async function Header() {
           </SignedIn>
 
           <SignedOut>
-            <SignInButton>
+            <SignInButton mode="modal" asChild>
               <Button
-                variant="outline"
-                className="text-sm"
-                style={{ borderColor: "hsl(199 89% 60% / 0.3)", color: "hsl(199, 89%, 70%)" }}
+                variant="ghost"
+                className="text-sm rounded-full px-5 h-9 bg-white/10 text-white hover:bg-white/20 transition-all duration-300 cursor-pointer border border-white/5"
               >
                 Sign In
               </Button>
@@ -139,7 +157,16 @@ export default async function Header() {
           </SignedOut>
 
           <SignedIn>
-            <UserButton appearance={{ elements: { avatarBox: "w-9 h-9" } }} afterSignOutUrl="/" />
+            <div className="pl-4 border-l border-white/10 ml-1">
+              <UserButton 
+                appearance={{ 
+                  elements: { 
+                    avatarBox: "w-8 h-8 opacity-90 hover:opacity-100 transition-opacity" 
+                  } 
+                }} 
+                afterSignOutUrl="/" 
+              />
+            </div>
           </SignedIn>
         </div>
       </nav>

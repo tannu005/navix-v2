@@ -61,7 +61,7 @@ function FAQItem({ faq, index }) {
   return (
     <div
       ref={ref}
-      className="border-b border-white/[0.06] last:border-0 reveal"
+      className="liquid-glass rounded-xl mb-3 reveal"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(20px)",
@@ -69,17 +69,17 @@ function FAQItem({ faq, index }) {
       }}
     >
       <button
-        className="w-full flex items-start justify-between gap-6 py-7 text-left group"
+        className="w-full flex items-start justify-between gap-6 px-6 py-5 text-left group"
         onClick={() => setOpen(!open)}
       >
         <span
-          className="text-sm text-white/50 group-hover:text-white/80 transition-colors duration-400 leading-relaxed"
+          className="text-sm text-white/80 group-hover:text-white transition-colors duration-400"
           style={{ transition: "color 0.3s" }}
         >
           {faq.question}
         </span>
         <span
-          className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-white/20 group-hover:text-white/40 transition-all duration-300 mt-0.5"
+          className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-white/40 group-hover:text-white transition-all duration-300"
           style={{
             transform: open ? "rotate(45deg)" : "rotate(0deg)",
             transition:
@@ -98,7 +98,7 @@ function FAQItem({ faq, index }) {
             "max-height 0.4s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
-        <p className="text-white/25 text-sm leading-relaxed pb-7 max-w-xl">
+        <p className="text-white/40 text-sm leading-relaxed px-6 pb-6 max-w-xl">
           {faq.answer}
         </p>
       </div>
@@ -111,26 +111,25 @@ export default function FAQs() {
   const headVisible = useInView(headRef);
 
   return (
-    <section className="py-32 px-6 border-t border-white/[0.04]">
+    <section className="relative z-10 py-32 px-6 border-t border-white/5 bg-transparent">
       <div className="max-w-4xl mx-auto">
         {/* Stats Section */}
-        <h2 className="text-3xl font-bold mb-10 text-center">Our Impact</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 reveal">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 reveal mb-32">
           <div className="text-center">
-            <p className="text-4xl font-bold">10k+</p>
-            <p className="text-muted-foreground">Resumes Built</p>
+            <p className="text-5xl text-white mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>10k+</p>
+            <p className="text-xs text-white/60 uppercase tracking-wider">Resumes Built</p>
           </div>
           <div className="text-center">
-            <p className="text-4xl font-bold">5k+</p>
-            <p className="text-muted-foreground">Interviews Prepped</p>
+            <p className="text-5xl text-white mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>5k+</p>
+            <p className="text-xs text-white/60 uppercase tracking-wider">Interviews Prepped</p>
           </div>
           <div className="text-center">
-            <p className="text-4xl font-bold">3k+</p>
-            <p className="text-muted-foreground">Cover Letters Generated</p>
+            <p className="text-5xl text-white mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>3k+</p>
+            <p className="text-xs text-white/60 uppercase tracking-wider">Cover Letters</p>
           </div>
           <div className="text-center">
-            <p className="text-4xl font-bold">2k+</p>
-            <p className="text-muted-foreground">Job Offers Secured</p>
+            <p className="text-5xl text-white mb-2" style={{ fontFamily: "'Instrument Serif', serif" }}>85%</p>
+            <p className="text-xs text-white/60 uppercase tracking-wider">Success Rate</p>
           </div>
         </div>
 
@@ -147,18 +146,17 @@ export default function FAQs() {
             }}
             className="md:sticky md:top-32 md:self-start reveal"
           >
-            <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">
+            <p className="text-xs tracking-[0.4em] text-white/30 uppercase mb-4">
               Questions
             </p>
             <h2
-              className="text-5xl font-medium text-white/80"
+              className="text-6xl text-white"
               style={{
-                fontFamily: "'Georgia', serif",
-                letterSpacing: "-0.03em",
+                fontFamily: "'Instrument Serif', serif"
               }}
             >
               Common<br />
-              <span className="text-white/30">queries.</span>
+              <span className="text-white/40">queries.</span>
             </h2>
           </div>
 

@@ -55,17 +55,16 @@ function TestimonialCard({ t, index }) {
     <div
       ref={ref}
       data-card
-      className="group flex flex-col justify-between p-8 border border-white/[0.06] hover:border-white/[0.10] transition-colors duration-500"
+      className="group liquid-glass flex flex-col justify-between p-8 hover:bg-white/5 transition-all duration-500 rounded-2xl m-2"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(40px)",
-        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, border-color 0.5s`,
-        background: "rgba(255,255,255,0.01)",
+        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s`,
       }}
     >
       <p
-        className="text-white/40 text-sm leading-relaxed mb-10 group-hover:text-white/60 transition-colors duration-500"
-        style={{ fontFamily: "'Georgia', serif" }}
+        className="text-white/60 text-lg leading-relaxed mb-10 group-hover:text-white/80 transition-colors duration-500"
+        style={{ fontFamily: "'Instrument Serif', serif" }}
       >
         &ldquo;{t.quote}&rdquo;
       </p>
@@ -74,18 +73,18 @@ function TestimonialCard({ t, index }) {
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0"
           style={{
-            border: "1px solid rgba(0,200,255,0.15)",
-            background: "rgba(0,200,255,0.06)",
-            color: "rgba(0,200,255,0.6)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            background: "rgba(255,255,255,0.05)",
+            color: "rgba(255,255,255,0.8)",
           }}
         >
           {t.initial}
         </div>
         <div>
-          <p className="text-white/60 text-sm font-medium">{t.author}</p>
-          <p className="text-white/20 text-xs">
+          <p className="text-white/80 text-sm font-medium">{t.author}</p>
+          <p className="text-white/40 text-xs">
             {t.role}{" "}
-            <span style={{ color: "rgba(0,200,255,0.4)" }}>· {t.company}</span>
+            <span style={{ color: "rgba(255,255,255,0.6)" }}>· {t.company}</span>
           </p>
         </div>
       </div>
@@ -98,11 +97,11 @@ export default function Testimonials() {
   const headVisible = useInView(headRef);
 
   return (
-    <section className="py-32 px-6 border-t border-white/[0.04]">
-      <div className="max-w-4xl mx-auto">
+    <section className="relative z-10 py-32 px-6 border-t border-white/5 bg-transparent">
+      <div className="max-w-6xl mx-auto">
         <div
           ref={headRef}
-          className="mb-20"
+          className="mb-20 text-center"
           style={{
             opacity: headVisible ? 1 : 0,
             transform: headVisible ? "translateY(0)" : "translateY(30px)",
@@ -110,22 +109,19 @@ export default function Testimonials() {
               "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
           }}
         >
-          <p className="text-xs tracking-[0.4em] text-white/20 uppercase mb-4">
+          <p className="text-xs tracking-[0.4em] text-white/30 uppercase mb-4">
             Voices
           </p>
           <h2
-            className="text-5xl font-medium text-white/80"
-            style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.03em" }}
+            className="text-6xl text-white"
+            style={{ fontFamily: "'Instrument Serif', serif" }}
           >
             Real careers,<br />
-            <span className="text-white/30">real results.</span>
+            <span className="text-white/40">real results.</span>
           </h2>
         </div>
 
-        <div
-          className="grid grid-cols-1 md:grid-cols-3 gap-px"
-          style={{ background: "rgba(255,255,255,0.04)" }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {TESTIMONIALS.map((t, i) => (
             <TestimonialCard key={i} t={t} index={i} />
           ))}
