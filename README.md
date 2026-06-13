@@ -38,9 +38,9 @@ graph TD;
     
     subgraph ReAct Loop [Autonomous Reasoning Loop]
         Agent --> |1. Plan| LLM[Groq Llama 3.3]
-        LLM --> |2. Act (Function Call)| Tools[(Tool Execution)]
+        LLM --> |2. Act - Function Call| Tools[(Tool Execution)]
         Tools --> |3. Observe| LLM
-        LLM --> |4. Reflect & Respond| Agent
+        LLM --> |4. Reflect and Respond| Agent
     end
 
     Tools --> |Fetch Data| DB[(Neon PostgreSQL)]
