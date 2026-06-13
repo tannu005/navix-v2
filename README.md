@@ -1,140 +1,114 @@
-# Navix v2 — Agentic AI Career Coach
+<div align="center">
+  <br />
+  <h1>🚀 Navix v2 — Agentic AI Career Coach</h1>
+  <p>
+    An enterprise-grade, autonomous AI career coaching platform. Navix uses a ReAct (Reasoning + Acting) Agent architecture to provide personalized career roadmaps, real-time salary intelligence, and ATS resume analysis.
+  </p>
+  <br />
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Next.js_15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+</div>
+
+<br />
+
+## 🌟 Key Features
+
+*   **🤖 Autonomous AI Agent (ReAct Loop):** A multi-step reasoning agent that breaks down user career goals, uses specialized tools (market research, skill gap analysis), observes the results, and synthesizes an actionable response.
+*   **🗺️ Dynamic Career Roadmaps:** Generates week-by-week learning plans tailored to the user's target role and current skill level.
+*   **📊 Real-time Salary Intelligence:** Pulls active market data to display salary ranges (Min, Median, Max) and provides a personalized negotiation script.
+*   **📄 ATS Resume Analyzer:** Instantly scores user resumes against industry-standard ATS algorithms, providing actionable feedback for improvement.
+*   **🔄 Automated Background Jobs:** Utilizes **Inngest** for background processing, including cron jobs that automatically refresh stale industry insights on a weekly basis.
 
 ---
 
-## What Makes This Different
+## 🏗️ System Architecture
 
-### Agentic AI Architecture (ReAct Loop)
-The core of Navix v2 is a **multi-step autonomous agent** that:
-1. **Plans** — breaks your career goal into research steps
-2. **Acts** — calls specialised tools (resume analysis, market research, skill gap evaluation)
-3. **Observes** — reads tool results and updates its understanding
-4. **Reflects** — synthesises all findings into a comprehensive, actionable answer
+Navix v2 implements a sophisticated Agentic architecture utilizing the ReAct (Reasoning and Acting) paradigm.
 
-This is a real implementation of the **ReAct (Reasoning + Acting)** pattern used in production agentic systems — exactly what top companies hire for.
+```mermaid
+graph TD;
+    User((User)) --> |Sends Query| UI[Next.js App Router UI]
+    UI --> |Server Action| Agent[AI Agent Controller]
+    
+    subgraph ReAct Loop [Autonomous Reasoning Loop]
+        Agent --> |1. Plan| LLM[Groq Llama 3.3]
+        LLM --> |2. Act (Function Call)| Tools[(Tool Execution)]
+        Tools --> |3. Observe| LLM
+        LLM --> |4. Reflect & Respond| Agent
+    end
 
-### Recruiter-Relevant Skills Demonstrated
-| Skill | Where |
-|-------|-------|
-| Agentic AI / LLM orchestration | `lib/agent.js` |
-| Tool-calling / function-calling | `lib/agent.js` → `AGENT_TOOLS` |
-| Multi-step reasoning chains | ReAct loop in `runAgent()` |
-| Streaming UI updates | `agent-client.jsx` |
-| Server Actions + Next.js App Router | All `actions/*.js` |
-| Prisma ORM + PostgreSQL | Schema + DB layer |
-| Clerk authentication | Middleware + checkUser |
-| Background jobs (Inngest) | `lib/inngest/functions.js` |
-| Tailwind CSS + shadcn/ui | All UI components |
-| Recharts data visualisation | Dashboard, Interview |
+    Tools --> |Fetch Data| DB[(Neon PostgreSQL)]
+    Tools --> |Fetch Intelligence| MarketAPI[Market Data]
+    
+    Agent --> |Streams Markdown| UI
+```
 
 ---
 
-## New Features vs Tutorial
+## 💡 Engineering Challenges & Lessons Learned
 
-| Feature | Tutorial | Navix v2 |
-|---------|----------|----------|
-| AI Career Agent | ❌ | ✅ Full ReAct loop with 8 tools |
-| Career Roadmap | ❌ | ✅ Week-by-week AI plan |
-| Skill Gap Analyser | ❌ | ✅ Match score + priorities |
-| Salary Intelligence | ❌ | ✅ Ranges + negotiation script |
-| ATS Score Checker | ❌ | ✅ In resume builder |
-| Job Tracker | ❌ | ✅ Full pipeline tracking |
-| Gemini model | 1.5-flash | 2.0-flash |
-| AI setup | Duplicated in every file | Centralised `lib/gemini.js` |
-| Industry refresh | Never refreshed | Auto-refreshes when stale |
-| SEO metadata | Empty | Full OpenGraph + keywords |
+1.  **Orchestrating the ReAct Loop:** Handling tool-calling with an LLM can be brittle. I learned how to strictly type function schemas (using Zod) so the AI always returns precisely formatted JSON arguments, preventing application crashes during the reasoning phase.
+2.  **Streaming UI Updates:** Waiting for a multi-step agent to finish thinking results in a poor UX. I implemented streaming responses so the user sees the agent's thought process (planning, calling tools, reflecting) in real-time, drastically reducing perceived latency.
+3.  **Database Connection Pooling in Serverless:** Moving to Vercel Serverless Functions initially caused database connection exhaustion. I solved this by migrating to **Neon Postgres** and configuring Prisma to use edge-compatible connection pooling.
 
 ---
 
-## Pages
+## ⚙️ Local Development Setup
 
-| Route | Description |
-|-------|-------------|
-| `/` | Landing page |
-| `/onboarding` | Profile setup |
-| `/dashboard` | Industry insights + salary charts |
-| `/ai-agent` | **NEW** Autonomous AI career agent |
-| `/career-roadmap` | **NEW** AI-generated learning plan |
-| `/skill-gap` | **NEW** Role match score + gap analysis |
-| `/salary` | **NEW** Salary data + negotiation coach |
-| `/resume` | Resume builder + ATS checker |
-| `/ai-cover-letter` | Cover letter generator |
-| `/interview` | Quiz + progress tracking |
-| `/job-tracker` | Application pipeline |
-
----
-
-## Setup
-
-### 1. Clone tutorial repo and replace files
+### 1. Clone the repository
 ```bash
-git clone https://github.com/piyush-eon/ai-career-coach.git navix
-cd navix
-# Replace all files with files from this folder
+git clone https://github.com/tannu005/navix-v2.git
+cd navix-v2
 ```
 
 ### 2. Install dependencies
+*Ensure you are using Node.js v20+*
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
 
-### 3. Set up environment variables
-```bash
-cp .env.example .env
-# Fill in all values
+### 3. Configure Environment Variables
+Create a `.env` file in the root directory:
+```env
+# Database (Neon Serverless Postgres)
+DATABASE_URL="your_neon_db_url"
+
+# Authentication (Clerk)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your_publishable_key"
+CLERK_SECRET_KEY="your_secret_key"
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
+
+# AI Provider (Groq)
+GROQ_API_KEY="your_groq_api_key"
+
+# Background Jobs (Inngest)
+INNGEST_EVENT_KEY="your_event_key"
+INNGEST_SIGNING_KEY="your_signing_key"
 ```
 
-### 4. Set up database
+### 4. Setup the Database
+Push the Prisma schema to your database:
 ```bash
 npx prisma db push
 ```
 
-### 5. Run dev server
+### 5. Start the Development Server
 ```bash
 npm run dev
 ```
+The application will be available at `http://localhost:3000`.
 
 ---
 
-## Environment Variables
-
-| Variable | Source |
-|----------|--------|
-| `DATABASE_URL` | [neon.tech](https://neon.tech) |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | [clerk.com](https://clerk.com) |
-| `CLERK_SECRET_KEY` | Clerk dashboard |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | `/sign-in` |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | `/sign-up` |
-| `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL` | `/onboarding` |
-| `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL` | `/onboarding` |
-| 'GROQ API Key '| (https://console.groq.com)|
-| `INNGEST_EVENT_KEY` | [inngest.com](https://inngest.com) |
-| `INNGEST_SIGNING_KEY` | Inngest dashboard |
-
----
-
-## Deploy to Vercel
-
-1. Push to GitHub
-2. Import at [vercel.com/new](https://vercel.com/new)
-3. Add all env vars in Vercel project settings
-4. Deploy — takes ~2 minutes
-5. Add your Vercel domain to Clerk's allowed domains
-
----
-
-## Tech Stack
-
-- **Next.js 15** App Router + Server Actions
-- **React 19**
-- **Clerk** — Authentication
-- **Prisma** + **Neon PostgreSQL** — Database
-- **GROQ API ** — AI
-- **Inngest** — Background jobs
-- **shadcn/ui** + **Tailwind CSS** — UI
-- **Recharts** — Charts
-- **Inngest** — Cron jobs for weekly insight refresh
-
----
-
-*Made by Tannu Yadav*
+<div align="center">
+  <i>Built with ❤️ by Tannu Yadav</i>
+</div>
