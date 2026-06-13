@@ -1,0 +1,34 @@
+﻿app/(main)/dashboard/_components/dashboard-view.tsx(146,18): error TS2741: Property 'className' is missing in type '{ children: any; key: any; variant: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/dashboard/_components/dashboard-view.tsx(182,18): error TS2741: Property 'variant' is missing in type '{ children: any; key: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/onboarding/_components/onboarding-form.tsx(113,53): error TS2322: Type 'string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>' is not assignable to type 'ReactNode'.
+  Type 'FieldError' is not assignable to type 'ReactNode'.
+    Type 'FieldError' is missing the following properties from type 'ReactPortal': children, props, key
+app/(main)/onboarding/_components/onboarding-form.tsx(129,53): error TS2322: Type 'string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>' is not assignable to type 'ReactNode'.
+  Type 'FieldError' is not assignable to type 'ReactNode'.
+    Type 'FieldError' is missing the following properties from type 'ReactPortal': children, props, key
+app/(main)/onboarding/_components/onboarding-form.tsx(155,53): error TS2322: Type 'string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>' is not assignable to type 'ReactNode'.
+  Type 'FieldError' is not assignable to type 'ReactNode'.
+    Type 'FieldError' is missing the following properties from type 'ReactPortal': children, props, key
+app/(main)/resume/_components/resume-builder.tsx(160,26): error TS2741: Property 'variant' is missing in type '{ children: any; key: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/resume/_components/resume-builder.tsx(168,26): error TS2741: Property 'variant' is missing in type '{ children: any; key: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/salary/_components/salary-client.tsx(107,22): error TS2741: Property 'className' is missing in type '{ children: any; key: any; variant: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/salary/_components/salary-client.tsx(124,22): error TS2741: Property 'variant' is missing in type '{ children: any; key: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/salary/_components/salary-client.tsx(161,20): error TS2741: Property 'className' is missing in type '{ children: any; key: any; variant: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/skill-gap/_components/skill-gap-client.tsx(114,24): error TS2741: Property 'variant' is missing in type '{ children: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/skill-gap/_components/skill-gap-client.tsx(135,24): error TS2741: Property 'variant' is missing in type '{ children: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/(main)/skill-gap/_components/skill-gap-client.tsx(192,22): error TS2741: Property 'variant' is missing in type '{ children: any; key: any; className: string; }' but required in type '{ [x: string]: any; className: any; variant: any; }'.
+app/page.tsx(55,10): error TS2741: Property 'scrollContainerRef' is missing in type '{ children: string; animationDuration: number; ease: string; scrollStart: string; scrollEnd: string; stagger: number; textClassName: string; style: { fontFamily: string; }; }' but required in type '{ children: any; scrollContainerRef: any; containerClassName?: string; textClassName?: string; animationDuration?: number; ease?: string; scrollStart?: string; scrollEnd?: string; stagger?: number; style: any; }'.
+components/header.tsx(149,40): error TS2322: Type '{ children: Element; mode: "modal"; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Without<WithClerkProp<PropsWithChildren<SignInButtonProps>>, "clerk">'.
+  Property 'asChild' does not exist on type 'IntrinsicAttributes & Without<SignInButtonPropsModal & Pick<SignInProps, "fallbackRedirectUrl" | "forceRedirectUrl" | ... 4 more ... | "oauthFlow"> & { ...; } & { ...; }, "clerk">'.
+components/scrollytelling-canvas.tsx(25,13): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+components/scrollytelling-canvas.tsx(29,17): error TS2339: Property 'failed' does not exist on type 'HTMLImageElement'.
+components/scrollytelling-canvas.tsx(31,13): error TS2794: Expected 1 arguments, but got 0. Did you forget to include 'void' in your type argument to 'Promise'?
+components/SmoothScroll.tsx(3,28): error TS2307: Cannot find module '@studio-freight/react-lenis' or its corresponding type declarations.
+components/tool-showcase.tsx(268,15): error TS2322: Type '(el: HTMLDivElement) => HTMLDivElement' is not assignable to type 'Ref<HTMLDivElement>'.
+  Type '(el: HTMLDivElement) => HTMLDivElement' is not assignable to type '(instance: HTMLDivElement) => void | (() => VoidOrUndefinedOnly)'.
+    Type 'HTMLDivElement' is not assignable to type 'void | (() => VoidOrUndefinedOnly)'.
+components/ui/separator.tsx(4,37): error TS2307: Cannot find module '@radix-ui/react-separator' or its corresponding type declarations.
+components/ui/separator.tsx(7,39): error TS2339: Property 'className' does not exist on type '{}'.
+components/ui/separator.tsx(7,50): error TS2339: Property 'orientation' does not exist on type '{}'.
+components/ui/separator.tsx(7,78): error TS2339: Property 'decorative' does not exist on type '{}'.
+components/ui/sonner.tsx(10,7): error TS2322: Type 'string' is not assignable to type '"system" | "dark" | "light"'.
