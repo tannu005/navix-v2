@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <h1>🚀 Navix v2 — Agentic AI Career Coach</h1>
+  <h1>🚀 Navix v2 - Agentic AI Career Coach</h1>
   <p>
     An enterprise-grade, autonomous AI career coaching platform. Navix uses a ReAct (Reasoning + Acting) Agent architecture to provide personalized career roadmaps, real-time salary intelligence, and ATS resume analysis.
   </p>
