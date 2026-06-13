@@ -14,10 +14,10 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               {[
-                { label: "Features", href: "#features" },
-                { label: "Process", href: "#process" },
-                { label: "Testimonials", href: "#testimonials" },
-                { label: "FAQ", href: "#faq" },
+                { label: "Features", href: "/#features" },
+                { label: "Process", href: "/#process" },
+                { label: "Testimonials", href: "/#testimonials" },
+                { label: "FAQ", href: "/#faq" },
               ].map((link) => (
                 <li key={link.label}>
                   <a
