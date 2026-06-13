@@ -111,7 +111,7 @@ export default function FAQs() {
   const headVisible = useInView(headRef);
 
   return (
-    <section className="relative z-10 py-32 px-6 border-t border-white/5 bg-transparent">
+    <section id="faq" className="relative z-10 py-32 px-6 border-t border-white/5 bg-transparent">
       <div className="max-w-4xl mx-auto">
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 reveal mb-32">

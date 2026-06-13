@@ -97,7 +97,7 @@ export default function Testimonials() {
   const headVisible = useInView(headRef);
 
   return (
-    <section className="relative z-10 py-32 px-6 border-t border-white/5 bg-transparent">
+    <section id="testimonials" className="relative z-10 py-32 px-6 border-t border-white/5 bg-transparent">
       <div className="max-w-6xl mx-auto">
         <div
           ref={headRef}

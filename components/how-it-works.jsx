@@ -106,7 +106,7 @@ export default function HowItWorks() {
   const headVisible = useInView(headRef);
 
   return (
-    <section className="relative z-10 border-t border-white/5 bg-transparent overflow-hidden">
+    <section id="process" className="relative z-10 border-t border-white/5 bg-transparent overflow-hidden">
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 relative z-20 px-6 pt-32 pb-48">
         {/* Heading */}
         <div

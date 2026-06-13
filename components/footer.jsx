@@ -87,7 +87,7 @@ export default function Footer() {
                 <Github size={16} />
               </a>
               <a
-                href="https://www.linkedin.com/in/tannu-yadav-298a0026a"
+                href="https://www.linkedin.com/in/tannu-yadav-06012733a/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
