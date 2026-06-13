@@ -47,7 +47,7 @@ const industries = [
   "Other",
 ];
 
-export default function OnboardingForm() {
+export default function OnboardingForm({ initialData = null }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -57,7 +57,15 @@ export default function OnboardingForm() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
+  } = useForm({ 
+    resolver: zodResolver(schema),
+    defaultValues: {
+      industry: initialData?.industry || "",
+      experience: initialData?.experience || 0,
+      bio: initialData?.bio || "",
+      skills: initialData?.skills ? initialData.skills.join(", ") : "",
+    }
+  });
 
   async function onSubmit(values) {
     setLoading(true);
@@ -89,7 +97,7 @@ export default function OnboardingForm() {
         {/* Industry */}
         <div className="space-y-2">
           <Label>Industry *</Label>
-          <Select onValueChange={(val) => setValue("industry", val)}>
+          <Select value={watch("industry")} onValueChange={(val) => setValue("industry", val)}>
             <SelectTrigger>
               <SelectValue placeholder="Select your industry" />
             </SelectTrigger>
