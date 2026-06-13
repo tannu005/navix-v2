@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Product */}
           <div>
             <h3 className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-3">
-              Product
+              Services
             </h3>
             <ul className="space-y-2">
               {[
@@ -61,7 +61,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="mailto:tannu@example.com"
+                  href="mailto:ytannu1410@gmail.com"
                   className="text-sm text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1.5"
                 >
                   <Mail size={12} />
@@ -78,14 +78,18 @@ export default function Footer() {
             </h3>
             <div className="flex items-center gap-3">
               <a
-                href="#"
+                href="https://github.com/tannu005"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="GitHub"
                 className="text-gray-500 hover:text-gray-300 transition-colors p-2 border border-white/10 hover:border-white/25 rounded"
               >
                 <Github size={16} />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/tannu-yadav-298a0026a"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="LinkedIn"
                 className="text-gray-500 hover:text-gray-300 transition-colors p-2 border border-white/10 hover:border-white/25 rounded"
               >
