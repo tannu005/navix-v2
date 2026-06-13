@@ -186,9 +186,15 @@ export default function RoadmapClient() {
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {phase.resources.map((r, j) => (
-                            <span key={j} className="text-xs border rounded-md px-2 py-1 text-muted-foreground flex items-center gap-1">
+                            <a 
+                              key={j} 
+                              href={r.url && r.url !== "string" ? r.url : `https://www.google.com/search?q=${encodeURIComponent(r.name)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs border rounded-md px-2 py-1 text-muted-foreground hover:text-white hover:border-white/40 hover:bg-white/5 transition-all flex items-center gap-1"
+                            >
                               {RESOURCE_ICONS[r.type] || "📌"} {r.name}
-                            </span>
+                            </a>
                           ))}
                         </div>
                       </div>

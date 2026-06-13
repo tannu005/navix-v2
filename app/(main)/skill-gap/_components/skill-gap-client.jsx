@@ -138,7 +138,15 @@ export default function SkillGapClient() {
                     {gap.resources?.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {gap.resources.map((r, j) => (
-                          <span key={j} className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{r}</span>
+                          <a 
+                            key={j} 
+                            href={`https://www.google.com/search?q=${encodeURIComponent(r)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-muted-foreground bg-muted hover:bg-white/10 hover:text-white transition-colors px-1.5 py-0.5 rounded flex items-center gap-1 cursor-pointer"
+                          >
+                            {r}
+                          </a>
                         ))}
                       </div>
                     )}
