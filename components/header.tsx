@@ -146,13 +146,12 @@ export default function Header() {
           </SignedIn>
 
           <SignedOut>
-            <SignInButton mode="modal" asChild>
-              <Button
-                variant="ghost"
+            <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
+              <button
                 className="text-sm rounded-full px-5 h-9 bg-white/10 text-white hover:bg-white/20 transition-all duration-300 cursor-pointer border border-white/5"
               >
                 Sign In
-              </Button>
+              </button>
             </SignInButton>
           </SignedOut>
 
